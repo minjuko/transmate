@@ -1,0 +1,20 @@
+<project name="Get {S3} Object" default="run" basedir=".">
+  <path id="aws.java.sdk.classpath">
+    <fileset dir="./lib" includes="**/*.jar"/>
+    <fileset dir="./third-party" includes="**/*.jar"/>
+    <pathelement location="lib"/>
+    <pathelement location="."/>
+  </path>
+
+  <target name="build">
+  <javac debug="true"
+    includeantruntime="false"
+    srcdir="."
+    destdir="."
+    classpathref="aws.java.sdk.classpath"/>
+  </target>
+
+  <target name="run" depends="build">
+    <java classname="GetS3Object" classpathref="aws.java.sdk.classpath" fork="true"/>
+  </target>
+</project>
