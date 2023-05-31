@@ -3,6 +3,7 @@ package com.site.ssk.account;
 import java.util.List;
 
 import com.site.ssk.meeting.Meeting;
+import com.site.ssk.schedule.schedule;
 
 import java.time.LocalDateTime;
 
@@ -22,10 +23,11 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Account {
-	@Id
+	
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 	
+	@Id
 	@Column(unique = true)
     private String accountid;
 
@@ -37,4 +39,7 @@ public class Account {
     
     @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
     private List<Meeting> meetingList;
+    
+    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    private List<schedule> scheduleList;
 }
