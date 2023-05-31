@@ -105,7 +105,7 @@ public class MeetingController {
 	
 	
 	// PATCH
-	@PatchMapping("meeting/patch/{id}")
+	@PatchMapping("/meeting/patch/{id}")
 	public ResponseEntity<Meeting> update(@PathVariable int id, @RequestBody Map<String,String> requestData) {
 		Meeting target = meetingRepository.findById(id).orElse(null);		
 		if(target == null ) {
@@ -120,7 +120,7 @@ public class MeetingController {
 				meeting.setTitle(value);
 			}
 			if(key == "category") {
-					meeting.setCategory(value);
+				meeting.setCategory(value);
 			}
 	    });	
 	    target.patch(meeting);
@@ -130,7 +130,7 @@ public class MeetingController {
 	
 	
 	//DELETE
-	@DeleteMapping("meeting/delete/{id}")
+	@DeleteMapping("/meeting/delete/{id}")
 	public ResponseEntity<Meeting> delete(@PathVariable int id) {
 		Meeting target = meetingRepository.findById(id).orElse(null);	// id대상이 없으면 null 반환	
 		if(target == null) {
