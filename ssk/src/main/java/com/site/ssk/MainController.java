@@ -36,9 +36,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController	// RestApi용 컨트롤러, 데이터(JSON)반환
 public class MainController {
-
 	
-	@PatchMapping("translate")
+	@PatchMapping("/translate")
 	public String create(@RequestBody Map<String,String> requestData) {
 		
 		translate t = new translate();
