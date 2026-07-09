@@ -1,10 +1,10 @@
-package com.site.ssk.meeting;
+package come.site.transmate.meeting;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.site.ssk.account.Account;
+import come.site.transmate.account.Account;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 	List<Meeting> findByAccountId(String accountid);

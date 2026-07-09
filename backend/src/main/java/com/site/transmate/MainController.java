@@ -1,4 +1,4 @@
-package com.site.ssk;
+package come.site.transmate;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +26,10 @@ import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.AmazonTranslateClient;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
-import com.site.ssk.account.Account;
-import com.site.ssk.account.AccountRepository;
-import com.site.ssk.meeting.Meeting;
-import com.site.ssk.meeting.MeetingRepository;
+import come.site.transmate.account.Account;
+import come.site.transmate.account.AccountRepository;
+import come.site.transmate.meeting.Meeting;
+import come.site.transmate.meeting.MeetingRepository;
 
 import lombok.RequiredArgsConstructor;
 
