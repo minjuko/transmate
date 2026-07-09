@@ -1,0 +1,28 @@
+# IDE
+.idea/
+*.iml
+
+# Java / Spring
+backend/bin/
+backend/build/
+backend/.gradle/
+*.class
+
+# Environment
+.env
+application.properties
+application-secret.properties
+
+# React Native
+mobile/node_modules/
+mobile/.bundle/
+mobile/android/app/build/
+mobile/android/build/
+mobile/ios/Pods/
+mobile/ios/build/
+mobile/android/app/google-services.json
+mobile/android/app/debug.keystore
+
+# OS
+.DS_Store
+Thumbs.db
