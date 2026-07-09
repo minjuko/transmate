@@ -1,8 +1,9 @@
-package com.site.ssk.meeting;
+package come.site.transmate.schedule;
 
 import java.time.LocalDateTime;
 
-import com.site.ssk.account.Account;
+import come.site.transmate.account.Account;
+import come.site.transmate.meeting.Meeting;
 
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity 
-public class Meeting {
+public class schedule {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -29,23 +30,16 @@ public class Meeting {
     private String data;
     
     @Column(columnDefinition = "TEXT")
-    private String summary_data;
-
-    private LocalDateTime createDate;
-    
-    @Column(length = 20)
-	private String category;
+    private String date;
 
     @ManyToOne
     private Account account;
 
-	public void patch(Meeting meeting) {
-		if(meeting.title!=null)
-			this.title = meeting.title;
-		if(meeting.data!=null)
-			this.data = meeting.data;
-		if(meeting.category!=null)
-			this.category = meeting.category;
-		
+	public void patch(schedule schedule) {
+		if(schedule.title!=null)
+			this.title = schedule.title;
+		if(schedule.data!=null)
+			this.data = schedule.data;
 	}
+	
 }
