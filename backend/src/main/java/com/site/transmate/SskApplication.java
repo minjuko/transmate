@@ -1,4 +1,4 @@
-package com.site.ssk;
+package come.site.transmate;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

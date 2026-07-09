@@ -1,4 +1,4 @@
-package com.site.ssk.schedule;
+package come.site.transmate.schedule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.site.ssk.account.Account;
-import com.site.ssk.account.AccountRepository;
-import com.site.ssk.meeting.Meeting;
-import com.site.ssk.meeting.MeetingRepository;
-import com.site.ssk.schedule.scheduleRepository;
+import come.site.transmate.account.Account;
+import come.site.transmate.account.AccountRepository;
+import come.site.transmate.meeting.Meeting;
+import come.site.transmate.meeting.MeetingRepository;
+import come.site.transmate.schedule.scheduleRepository;
 
 import lombok.RequiredArgsConstructor;
 

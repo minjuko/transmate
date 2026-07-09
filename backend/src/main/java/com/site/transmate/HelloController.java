@@ -1,4 +1,4 @@
-package com.site.ssk;
+package come.site.transmate;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

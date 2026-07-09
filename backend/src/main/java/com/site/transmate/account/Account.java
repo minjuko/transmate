@@ -1,9 +1,9 @@
-package com.site.ssk.account;
+package come.site.transmate.account;
 
 import java.util.List;
 
-import com.site.ssk.meeting.Meeting;
-import com.site.ssk.schedule.schedule;
+import come.site.transmate.meeting.Meeting;
+import come.site.transmate.schedule.schedule;
 
 import java.time.LocalDateTime;
 

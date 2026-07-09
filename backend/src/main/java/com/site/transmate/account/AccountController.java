@@ -1,5 +1,5 @@
 
-package com.site.ssk.account;
+package come.site.transmate.account;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -9,8 +9,8 @@ import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.site.ssk.meeting.Meeting;
-import com.site.ssk.meeting.MeetingRepository;
+import come.site.transmate.meeting.Meeting;
+import come.site.transmate.meeting.MeetingRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

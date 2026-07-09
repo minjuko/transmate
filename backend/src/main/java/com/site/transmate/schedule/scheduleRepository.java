@@ -1,11 +1,11 @@
-package com.site.ssk.schedule;
+package come.site.transmate.schedule;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.site.ssk.account.Account;
-import com.site.ssk.meeting.Meeting;
+import come.site.transmate.account.Account;
+import come.site.transmate.meeting.Meeting;
 
 public interface scheduleRepository extends JpaRepository<schedule, Integer> {
 	List<schedule> findByAccountId(String accountid);
