@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SskApplication {
+public class TransmateApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SskApplication.class, args);
+		SpringApplication.run(TransmateApplication.class, args);
 	}
 
 }
