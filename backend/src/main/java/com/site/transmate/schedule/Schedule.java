@@ -1,9 +1,6 @@
-package come.site.transmate.schedule;
+package com.site.transmate.schedule;
 
-import java.time.LocalDateTime;
-
-import come.site.transmate.account.Account;
-import come.site.transmate.meeting.Meeting;
+import com.site.transmate.account.Account;
 
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
@@ -18,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity 
-public class schedule {
+public class Schedule {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -35,11 +32,13 @@ public class schedule {
     @ManyToOne
     private Account account;
 
-	public void patch(schedule schedule) {
+	public void patch(Schedule schedule) {
 		if(schedule.title!=null)
 			this.title = schedule.title;
 		if(schedule.data!=null)
 			this.data = schedule.data;
+        if(schedule.date!=null)
+            this.date = schedule.date;
 	}
 	
 }
