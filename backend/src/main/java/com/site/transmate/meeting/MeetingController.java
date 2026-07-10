@@ -1,4 +1,4 @@
-package come.site.transmate.meeting;
+package com.site.transmate.transmate.meeting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
 
-import come.site.transmate.account.Account;
-import come.site.transmate.account.AccountRepository;
+import com.site.transmate.transmate.account.Account;
+import com.site.transmate.transmate.account.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -87,16 +87,16 @@ public class MeetingController {
 	    meeting.setAccount(q);
 	    meeting.setCreateDate(LocalDateTime.now());
 	    requestData.forEach((key, value) -> {
-			if(key == "data") {
+			if("data".equals(key)) {
 				meeting.setData(value);
 			}
-			if(key == "summary_data") {
+			if("summary_data".equals(key)) {
 				meeting.setSummary_data(value);
 			}
-			if(key == "title") {
+			if("title".equals(key)) {
 				meeting.setTitle(value);
 			}
-			if(key == "category") {
+			if("category".equals(key)) {
 					meeting.setCategory(value);
 			}
 	    });
@@ -113,13 +113,13 @@ public class MeetingController {
 		}
 	    Meeting meeting = new Meeting();	    
 	    requestData.forEach((key, value) -> {
-			if(key == "data") {
+			if("data".equals(key)) {
 				meeting.setData(value);
 			}
-			if(key == "title") {
+			if("title".equals(key)) {
 				meeting.setTitle(value);
 			}
-			if(key == "category") {
+			if("category".equals(key)) {
 				meeting.setCategory(value);
 			}
 	    });	

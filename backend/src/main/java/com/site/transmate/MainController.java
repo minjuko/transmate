@@ -1,22 +1,9 @@
-package come.site.transmate;
+package com.site.transmate;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -26,65 +13,137 @@ import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.AmazonTranslateClient;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
-import come.site.transmate.account.Account;
-import come.site.transmate.account.AccountRepository;
-import come.site.transmate.meeting.Meeting;
-import come.site.transmate.meeting.MeetingRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RestController	// RestApi용 컨트롤러, 데이터(JSON)반환
+@RestController // Rest API용 컨트롤러, 데이터(JSON) 반환
 public class MainController {
-	
-	@PatchMapping("/translate")
-	public String create(@RequestBody Map<String,String> requestData) {
-		
-		translate t = new translate();
-		
-		requestData.forEach((key, value) -> {
-			if(key == "TerminologyNames") {
-				t.TerminologyNames = value;
-			}
-			if(key == "SourceLanguageCode") {
-				t.SourceLanguageCode = value;
-			}
-			if(key == "TargetLanguageCode") {
-				t.TargetLanguageCode = value;
-			}
-			if(key == "Text") {
-				t.Text = value;
-			}
-	    });
-		
-		AWSCredentialsProvider awsCreds = DefaultAWSCredentialsProviderChain.getInstance();
-        
-        AmazonTranslate translate = AmazonTranslateClient.builder()
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds.getCredentials()))
+
+    @PatchMapping("/translate")
+    public String translate(@RequestBody Map<String, String> requestData) {
+
+        translate translateRequest = new translate();
+
+        requestData.forEach((key, value) -> {
+
+            if ("TerminologyNames".equals(key)) {
+                translateRequest.TerminologyNames = value;
+            }
+
+            if ("SourceLanguageCode".equals(key)) {
+                translateRequest.SourceLanguageCode = value;
+            }
+
+            if ("TargetLanguageCode".equals(key)) {
+                translateRequest.TargetLanguageCode = value;
+            }
+
+            if ("Text".equals(key)) {
+                translateRequest.Text = value;
+            }
+        });
+
+        AWSCredentialsProvider awsCredentialsProvider =
+                DefaultAWSCredentialsProviderChain.getInstance();
+
+        AmazonTranslate amazonTranslateClient = AmazonTranslateClient.builder()
+                .withCredentials(
+                        new AWSStaticCredentialsProvider(
+                                awsCredentialsProvider.getCredentials()
+                        )
+                )
                 .withRegion("ap-northeast-2")
                 .build();
 
-        TranslateTextRequest request3 = new TranslateTextRequest()
-                .withText(t.Text)
-                .withTerminologyNames(t.TerminologyNames)
-                .withSourceLanguageCode(t.SourceLanguageCode)
-                .withTargetLanguageCode(t.TargetLanguageCode);
-        TranslateTextResult result3  = translate.translateText(request3);
-        System.out.println(result3.getTranslatedText());
-        System.out.println(result3.getAppliedTerminologies().get(0).getTerms().get(0).getSourceText());
-        String term = result3.getAppliedTerminologies().get(0).getTerms().get(0).getSourceText();
-        String targetTerm = result3.getAppliedTerminologies().get(0).getTerms().get(0).getTargetText();
-        String modified = t.Text.replace(term, '[' + term + ']');
-        System.out.println(modified);
-        TranslateTextRequest modifiedRequest = new TranslateTextRequest()
-                .withText(modified)
-                .withTerminologyNames(t.TerminologyNames)
-                .withSourceLanguageCode(t.SourceLanguageCode)
-                .withTargetLanguageCode(t.TargetLanguageCode);
-        TranslateTextResult modifiedResult = translate.translateText(modifiedRequest);
-        String modifiedText = modifiedResult.getTranslatedText();
-        int targetIndex = modifiedText.indexOf(targetTerm); 
-        String result = modifiedText.substring(0,targetIndex-1) + targetTerm + modifiedText.substring(targetIndex + targetTerm.length() +2);
-        return result;
-	}
+        TranslateTextRequest initialTranslateRequest =
+                new TranslateTextRequest()
+                        .withText(translateRequest.Text)
+                        .withTerminologyNames(
+                                translateRequest.TerminologyNames
+                        )
+                        .withSourceLanguageCode(
+                                translateRequest.SourceLanguageCode
+                        )
+                        .withTargetLanguageCode(
+                                translateRequest.TargetLanguageCode
+                        );
+
+        TranslateTextResult initialTranslateResult =
+                amazonTranslateClient.translateText(
+                        initialTranslateRequest
+                );
+
+        System.out.println(
+                initialTranslateResult.getTranslatedText()
+        );
+
+        System.out.println(
+                initialTranslateResult
+                        .getAppliedTerminologies()
+                        .get(0)
+                        .getTerms()
+                        .get(0)
+                        .getSourceText()
+        );
+
+        String sourceTerm = initialTranslateResult
+                .getAppliedTerminologies()
+                .get(0)
+                .getTerms()
+                .get(0)
+                .getSourceText();
+
+        String translatedTargetTerm = initialTranslateResult
+                .getAppliedTerminologies()
+                .get(0)
+                .getTerms()
+                .get(0)
+                .getTargetText();
+
+        String markedSourceText = translateRequest.Text.replace(
+                sourceTerm,
+                "[" + sourceTerm + "]"
+        );
+
+        System.out.println(markedSourceText);
+
+        TranslateTextRequest markedTranslateRequest =
+                new TranslateTextRequest()
+                        .withText(markedSourceText)
+                        .withTerminologyNames(
+                                translateRequest.TerminologyNames
+                        )
+                        .withSourceLanguageCode(
+                                translateRequest.SourceLanguageCode
+                        )
+                        .withTargetLanguageCode(
+                                translateRequest.TargetLanguageCode
+                        );
+
+        TranslateTextResult markedTranslateResult =
+                amazonTranslateClient.translateText(
+                        markedTranslateRequest
+                );
+
+        String markedTranslatedText =
+                markedTranslateResult.getTranslatedText();
+
+        int targetTermIndex =
+                markedTranslatedText.indexOf(translatedTargetTerm);
+
+        String finalTranslatedText =
+                markedTranslatedText.substring(
+                        0,
+                        targetTermIndex - 1
+                )
+                        + translatedTargetTerm
+                        + markedTranslatedText.substring(
+                        targetTermIndex
+                                + translatedTargetTerm.length()
+                                + 2
+                );
+
+        return finalTranslatedText;
+    }
 }

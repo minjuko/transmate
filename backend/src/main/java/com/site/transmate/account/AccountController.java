@@ -1,4 +1,4 @@
-package come.site.transmate.account;
+package com.site.transmate.transmate.account;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import come.site.transmate.meeting.Meeting;
-import come.site.transmate.meeting.MeetingRepository;
+import com.site.transmate.transmate.meeting.Meeting;
+import com.site.transmate.transmate.meeting.MeetingRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,25 +49,23 @@ public class AccountController {
 	//POST
 	@PostMapping("/account/create")
 	public void create(@RequestBody Map<String,String> requestData) {
-		// accountid, name, password 받아와야함
+
 	    Account account = new Account();
 
 	    requestData.forEach((key, value) -> {
-			if(key == "accountid") {
+			if("accountid".equals(key)) {
 				account.setAccountid(value);
 			}
-			if(key == "name") {
+			if("name".equals(key)) {
 				account.setName(value);
 			}
-			if(key == "password") {
+			if("password".equals(key)) {
 				account.setPassword(value);
 			}
 	    });
 			
 		this.accountRepository.save(account);
-	
-	//DELETE
-		
+
 	}
 }
 

@@ -1,4 +1,4 @@
-package come.site.transmate;
+package com.site.transmate.transmate;
 
 import java.sql.SQLException;
 
