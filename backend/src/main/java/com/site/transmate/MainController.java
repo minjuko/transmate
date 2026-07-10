@@ -63,7 +63,7 @@ public class MainController {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCreds.getCredentials()))
                 .withRegion("ap-northeast-2")
                 .build();
-        // String text = "Anti-circumvention refers to laws which prohibit the circumvention of technological barriers for using a digital good in certain ways which the rightsholders do not wish to allow.";
+
         TranslateTextRequest request3 = new TranslateTextRequest()
                 .withText(t.Text)
                 .withTerminologyNames(t.TerminologyNames)
