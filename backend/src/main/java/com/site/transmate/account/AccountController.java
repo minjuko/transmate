@@ -27,10 +27,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController	// RestApi용 컨트롤러, 데이터(JSON)반환
 public class AccountController {
-	
-	@Autowired
+
     private final MeetingRepository meetingRepository;
-	@Autowired
     private final AccountRepository accountRepository;
 	
 	//GET
