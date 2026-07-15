@@ -1,4 +1,4 @@
-package com.site.transmate.transmate;
+package com.site.transmate;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

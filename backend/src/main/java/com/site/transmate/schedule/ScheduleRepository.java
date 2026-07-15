@@ -1,4 +1,4 @@
-package com.site.transmate.transmate.schedule;
+package com.site.transmate.schedule;
 
 import java.util.List;
 

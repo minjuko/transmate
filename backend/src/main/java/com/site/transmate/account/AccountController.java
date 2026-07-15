@@ -1,4 +1,4 @@
-package com.site.transmate.transmate.account;
+package com.site.transmate.account;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.site.transmate.transmate.meeting.Meeting;
-import com.site.transmate.transmate.meeting.MeetingRepository;
+import com.site.transmate.meeting.Meeting;
+import com.site.transmate.meeting.MeetingRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

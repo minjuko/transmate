@@ -1,4 +1,4 @@
-package com.site.transmate.transmate.account;
+package com.site.transmate.account;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,4 +10,4 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	Account findByName(String name);
 	List<Account> findByNameLike(String name);
 
-} 
+}

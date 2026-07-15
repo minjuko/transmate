@@ -1,8 +1,8 @@
-package com.site.transmate.transmate.meeting;
+package com.site.transmate.meeting;
 
 import java.time.LocalDateTime;
 
-import com.site.transmate.transmate.account.Account;
+import com.site.transmate.account.Account;
 
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
