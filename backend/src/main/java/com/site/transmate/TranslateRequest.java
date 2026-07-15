@@ -1,4 +1,7 @@
-package com.site.transmate.transmate;
+package com.site.transmate;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

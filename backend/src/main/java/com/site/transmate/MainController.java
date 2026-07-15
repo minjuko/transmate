@@ -23,24 +23,24 @@ public class MainController {
     @PatchMapping("/translate")
     public String translate(@RequestBody Map<String, String> requestData) {
 
-        translate translateRequest = new translate();
+        TranslateRequest translateRequest = new TranslateRequest();
 
         requestData.forEach((key, value) -> {
 
             if ("TerminologyNames".equals(key)) {
-                translateRequest.TerminologyNames = value;
+                translateRequest.setTerminologyNames(value);
             }
 
             if ("SourceLanguageCode".equals(key)) {
-                translateRequest.SourceLanguageCode = value;
+                translateRequest.setSourceLanguageCode(value);
             }
 
             if ("TargetLanguageCode".equals(key)) {
-                translateRequest.TargetLanguageCode = value;
+                translateRequest.setTargetLanguageCode(value);
             }
 
             if ("Text".equals(key)) {
-                translateRequest.Text = value;
+                translateRequest.setText(value);
             }
         });
 
@@ -58,15 +58,15 @@ public class MainController {
 
         TranslateTextRequest initialTranslateRequest =
                 new TranslateTextRequest()
-                        .withText(translateRequest.Text)
+                        .withText(translateRequest.getText())
                         .withTerminologyNames(
-                                translateRequest.TerminologyNames
+                                translateRequest.getTerminologyNames()
                         )
                         .withSourceLanguageCode(
-                                translateRequest.SourceLanguageCode
+                                translateRequest.getSourceLanguageCode()
                         )
                         .withTargetLanguageCode(
-                                translateRequest.TargetLanguageCode
+                                translateRequest.getTargetLanguageCode()
                         );
 
         TranslateTextResult initialTranslateResult =
@@ -101,7 +101,7 @@ public class MainController {
                 .get(0)
                 .getTargetText();
 
-        String markedSourceText = translateRequest.Text.replace(
+        String markedSourceText = translateRequest.getText().replace(
                 sourceTerm,
                 "[" + sourceTerm + "]"
         );
@@ -112,13 +112,13 @@ public class MainController {
                 new TranslateTextRequest()
                         .withText(markedSourceText)
                         .withTerminologyNames(
-                                translateRequest.TerminologyNames
+                                translateRequest.getTerminologyNames()
                         )
                         .withSourceLanguageCode(
-                                translateRequest.SourceLanguageCode
+                                translateRequest.getSourceLanguageCode()
                         )
                         .withTargetLanguageCode(
-                                translateRequest.TargetLanguageCode
+                                translateRequest.getTargetLanguageCode()
                         );
 
         TranslateTextResult markedTranslateResult =

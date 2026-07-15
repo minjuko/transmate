@@ -1,4 +1,4 @@
-package com.site.transmate.transmate;
+package com.site.transmate;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,4 +11,4 @@ public class HelloController {
     public String hello() {
         return "Hello ssk@###!!";
     }
-    
+}

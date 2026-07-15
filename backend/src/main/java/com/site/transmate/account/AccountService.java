@@ -1,4 +1,4 @@
-package com.site.transmate.transmate.account;
+package com.site.transmate.account;
 
 import java.util.List;
 
