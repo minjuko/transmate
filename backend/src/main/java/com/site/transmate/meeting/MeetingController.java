@@ -1,4 +1,4 @@
-package com.site.transmate.transmate.meeting;
+package com.site.transmate.meeting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.site.transmate.transmate.account.Account;
-import com.site.transmate.transmate.account.AccountRepository;
+import com.site.transmate.account.Account;
+import com.site.transmate.account.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
 

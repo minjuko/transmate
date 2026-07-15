@@ -1,9 +1,9 @@
-package com.site.transmate.transmate.account;
+package com.site.transmate.account;
 
 import java.util.List;
 
-import com.site.transmate.transmate.meeting.Meeting;
-import com.site.transmate.transmate.schedule.schedule;
+import com.site.transmate.meeting.Meeting;
+import com.site.transmate.schedule.Schedule;
 
 import java.time.LocalDateTime;
 
@@ -41,5 +41,5 @@ public class Account {
     private List<Meeting> meetingList;
     
     @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
-    private List<schedule> scheduleList;
+    private List<Schedule> scheduleList;
 }
