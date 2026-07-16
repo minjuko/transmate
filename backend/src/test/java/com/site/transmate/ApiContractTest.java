@@ -31,6 +31,8 @@ import com.site.transmate.schedule.ScheduleRepository;
 import com.site.transmate.schedule.ScheduleService;
 import com.site.transmate.translation.TranslateController;
 import com.site.transmate.translation.TranslateService;
+import com.site.transmate.translation.TranslationProviderException;
+import com.site.transmate.translation.TranslationRequestException;
 import com.site.transmate.translation.dto.TranslateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +109,47 @@ class ApiContractTest {
         assertThat(requestCaptor.getValue().terminologyNames()).isEqualTo("category");
         assertThat(requestCaptor.getValue().sourceLanguageCode()).isEqualTo("en");
         assertThat(requestCaptor.getValue().targetLanguageCode()).isEqualTo("ko");
+    }
+
+    @Test
+    void invalidAwsTranslationRequestReturnsSafeBadRequest() throws Exception {
+        when(translateService.translate(any(TranslateRequest.class)))
+                .thenThrow(new TranslationRequestException(
+                        "번역 요청을 처리할 수 없습니다.",
+                        new RuntimeException("sensitive AWS details")
+                ));
+
+        mockMvc.perform(post("/translate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validTranslateRequest()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message")
+                        .value("번역 요청을 처리할 수 없습니다."))
+                .andExpect(jsonPath("$.message")
+                        .value(org.hamcrest.Matchers.not(
+                                org.hamcrest.Matchers.containsString("AWS"))));
+    }
+
+    @Test
+    void unavailableAwsTranslationReturnsSafeServiceUnavailable() throws Exception {
+        when(translateService.translate(any(TranslateRequest.class)))
+                .thenThrow(new TranslationProviderException(
+                        "번역 서비스를 일시적으로 사용할 수 없습니다.",
+                        new RuntimeException("sensitive credential details")
+                ));
+
+        mockMvc.perform(post("/translate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validTranslateRequest()))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.status").value(503))
+                .andExpect(jsonPath("$.error").value("Service Unavailable"))
+                .andExpect(jsonPath("$.message")
+                        .value("번역 서비스를 일시적으로 사용할 수 없습니다."))
+                .andExpect(jsonPath("$.message")
+                        .value(org.hamcrest.Matchers.not(
+                                org.hamcrest.Matchers.containsString("credential"))));
     }
 
     @Test
@@ -464,5 +507,16 @@ class ApiContractTest {
                 .andExpect(jsonPath("$.fieldErrors.text").value("Text는 필수입니다."))
                 .andExpect(jsonPath("$.fieldErrors.sourceLanguageCode")
                         .value("SourceLanguageCode는 필수입니다."));
+    }
+
+    private String validTranslateRequest() {
+        return """
+                {
+                  "Text": "source text",
+                  "TerminologyNames": "category",
+                  "SourceLanguageCode": "en",
+                  "TargetLanguageCode": "ko"
+                }
+                """;
     }
 }
