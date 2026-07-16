@@ -21,14 +21,14 @@ class DatabaseMigrationTest {
         migrate(url, false);
 
         assertThat(columns(url, "ACCOUNT"))
-                .contains("ACCOUNTID", "ID", "NAME")
-                .doesNotContain("PASSWORD");
+                .contains("ACCOUNTID", "NAME")
+                .doesNotContain("ID", "PASSWORD");
         assertThat(columns(url, "MEETING")).contains("DATE", "ACCOUNT_ACCOUNTID");
         assertThat(columns(url, "SCHEDULE")).contains("DATE", "TIME", "ACCOUNT_ACCOUNTID");
     }
 
     @Test
-    void removesPasswordFromAnExistingUnversionedDatabase() throws SQLException {
+    void removesLegacyAccountColumnsFromAnExistingUnversionedDatabase() throws SQLException {
         String url = "jdbc:h2:mem:migration-existing;DB_CLOSE_DELAY=-1";
         try (Connection connection = DriverManager.getConnection(url, "sa", "")) {
             connection.createStatement().execute("""
@@ -43,7 +43,7 @@ class DatabaseMigrationTest {
 
         migrate(url, true);
 
-        assertThat(columns(url, "ACCOUNT")).doesNotContain("PASSWORD");
+        assertThat(columns(url, "ACCOUNT")).doesNotContain("ID", "PASSWORD");
     }
 
     private void migrate(String url, boolean baselineOnMigrate) {
