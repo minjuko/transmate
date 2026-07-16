@@ -1,10 +1,8 @@
 package com.site.transmate.account;
 
-import java.util.Map;
-import com.site.transmate.meeting.MeetingRepository;
-import com.site.transmate.api.ResourceNotFoundException;
-
-import org.springframework.http.HttpStatus;
+import com.site.transmate.account.dto.AccountCreateRequest;
+import com.site.transmate.account.dto.AccountResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,49 +10,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
-@RestController	// RestApi용 컨트롤러, 데이터(JSON)반환
+@RestController
 public class AccountController {
 
-    private final MeetingRepository meetingRepository;
-    private final AccountRepository accountRepository;
-	
-	//GET
-	@GetMapping("/account/{accountid}")
-	public Account account(@PathVariable String accountid) {
-		Account a = this.accountRepository.findByAccountid(accountid)
-				.orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 사용자입니다."));
-		Account ret = new Account();
-		ret.setId(a.getId());
-		ret.setAccountid(a.getAccountid());
-		ret.setName(a.getName());
-		ret.setPassword(a.getPassword());
-		return ret;
-	}
-	
-	//POST
-	@PostMapping("/account/create")
-	public ResponseEntity<Void> create(@RequestBody Map<String,String> requestData) {
+    private final AccountService accountService;
 
-	    Account account = new Account();
+    @GetMapping("/account/{accountid}")
+    public AccountResponse account(@PathVariable String accountid) {
+        return accountService.get(accountid);
+    }
 
-	    requestData.forEach((key, value) -> {
-			if("accountid".equals(key)) {
-				account.setAccountid(value);
-			}
-			if("name".equals(key)) {
-				account.setName(value);
-			}
-			if("password".equals(key)) {
-				account.setPassword(value);
-			}
-	    });
-			
-		this.accountRepository.save(account);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-
-	}
+    @PostMapping("/account/create")
+    public ResponseEntity<Void> create(@RequestBody AccountCreateRequest request) {
+        accountService.create(request);
+        return ResponseEntity.status(201).build();
+    }
 }
-
