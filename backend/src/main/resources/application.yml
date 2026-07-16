@@ -22,3 +22,6 @@ transmate:
   aws:
     translate:
       region: ${AWS_TRANSLATE_REGION:ap-northeast-2}
+      connection-timeout-millis: ${AWS_TRANSLATE_CONNECTION_TIMEOUT_MILLIS:3000}
+      socket-timeout-millis: ${AWS_TRANSLATE_SOCKET_TIMEOUT_MILLIS:10000}
+      max-error-retry: ${AWS_TRANSLATE_MAX_ERROR_RETRY:2}

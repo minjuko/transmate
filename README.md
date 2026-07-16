@@ -86,6 +86,9 @@
 | `H2_CONSOLE_ENABLED` | 아니요 | `false` | H2 콘솔 활성화 여부 |
 | `H2_CONSOLE_ALLOW_OTHERS` | 아니요 | `false` | H2 콘솔 외부 접속 허용 여부 |
 | `AWS_TRANSLATE_REGION` | 아니요 | `ap-northeast-2` | Amazon Translate 리전 |
+| `AWS_TRANSLATE_CONNECTION_TIMEOUT_MILLIS` | 아니요 | `3000` | AWS 연결 제한시간(ms) |
+| `AWS_TRANSLATE_SOCKET_TIMEOUT_MILLIS` | 아니요 | `10000` | AWS 응답 대기 제한시간(ms) |
+| `AWS_TRANSLATE_MAX_ERROR_RETRY` | 아니요 | `2` | AWS 요청 실패 시 최대 재시도 횟수 |
 
 Firebase Admin과 AWS SDK 자격 증명은 코드나 설정 파일에 저장하지 않고 각 SDK의 기본 자격 증명 체인으로 제공한다. 운영에서는 `DB_DDL_AUTO=validate`를 유지하고 H2 콘솔을 활성화하지 않는다.
 

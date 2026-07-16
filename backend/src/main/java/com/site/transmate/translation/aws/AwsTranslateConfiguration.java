@@ -1,5 +1,6 @@
 package com.site.transmate.translation.aws;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.translate.AmazonTranslate;
@@ -18,12 +19,24 @@ public class AwsTranslateConfiguration {
     }
 
     @Bean
+    public ClientConfiguration awsTranslateClientConfiguration(
+            AwsTranslateProperties properties
+    ) {
+        return new ClientConfiguration()
+                .withConnectionTimeout(properties.connectionTimeoutMillis())
+                .withSocketTimeout(properties.socketTimeoutMillis())
+                .withMaxErrorRetry(properties.maxErrorRetry());
+    }
+
+    @Bean
     public AmazonTranslate amazonTranslate(
             AwsTranslateProperties properties,
-            AWSCredentialsProvider credentialsProvider
+            AWSCredentialsProvider credentialsProvider,
+            ClientConfiguration clientConfiguration
     ) {
         return AmazonTranslateClient.builder()
                 .withCredentials(credentialsProvider)
+                .withClientConfiguration(clientConfiguration)
                 .withRegion(properties.region())
                 .build();
     }

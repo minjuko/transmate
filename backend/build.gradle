@@ -23,9 +23,7 @@ dependencies {
 	//runtimeOnly 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.flywaydb:flyway-core'
-	implementation 'com.google.code.gson:gson:2.9.0'
 	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
-	implementation 'com.amazonaws:aws-java-sdk-s3'
 	implementation 'com.amazonaws:aws-java-sdk-translate:1.12.100'
 	implementation 'com.google.firebase:firebase-admin:9.10.0'
 }
