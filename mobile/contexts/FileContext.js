@@ -3,6 +3,7 @@ import {createContext, useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
 import backendApi from '../lib/backendApi';
 import {useUserContext} from '../contexts/UserContext';
+import {createLocalMeeting, createMeeting} from '../lib/meetingsApi';
 
 const FileContext = createContext();
 
@@ -21,22 +22,12 @@ export const FileContextProvider = ({children}) => {
   ]);
 
   const onCreate = async ({title, department, content, date}) => {
-    const file = {
-      id: uuidv4(),
-      title,
-      department,
-      content,
-      date,
-    };
+    const meeting = {title, department, content, date};
+    const localId = uuidv4();
+    let file = createLocalMeeting(meeting, localId);
 
     try {
-      const response = await backendApi.post(`/meeting/create/${user.uid}`, {
-        title: title,
-        category: department,
-        data: content,
-        date: date,
-      });
-      file.id = response.data.meetingid;
+      file = await createMeeting(user.uid, meeting, localId);
     } catch (error) {
       console.error('Error createFile:', error);
     }
