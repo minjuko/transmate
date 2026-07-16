@@ -71,6 +71,45 @@
 
 </br>
 
+<h2>실행 환경 설정</h2>
+
+백엔드는 다음 환경변수를 실행 프로세스에 설정해야 한다.
+
+| 환경변수 | 필수 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `DB_URL` | 예 | 없음 | JDBC 데이터베이스 URL |
+| `DB_USERNAME` | 예 | 없음 | 데이터베이스 사용자명 |
+| `DB_PASSWORD` | 예 | 없음 | 데이터베이스 비밀번호 |
+| `DB_DRIVER_CLASS_NAME` | 아니요 | `org.h2.Driver` | JDBC 드라이버 클래스 |
+| `DB_DIALECT` | 아니요 | `org.hibernate.dialect.H2Dialect` | Hibernate dialect |
+| `DB_DDL_AUTO` | 아니요 | `validate` | Hibernate 스키마 정책 |
+| `H2_CONSOLE_ENABLED` | 아니요 | `false` | H2 콘솔 활성화 여부 |
+| `H2_CONSOLE_ALLOW_OTHERS` | 아니요 | `false` | H2 콘솔 외부 접속 허용 여부 |
+| `AWS_TRANSLATE_REGION` | 아니요 | `ap-northeast-2` | Amazon Translate 리전 |
+
+Firebase Admin과 AWS SDK 자격 증명은 코드나 설정 파일에 저장하지 않고 각 SDK의 기본 자격 증명 체인으로 제공한다. 운영에서는 `DB_DDL_AUTO=validate`를 유지하고 H2 콘솔을 활성화하지 않는다.
+
+PowerShell 실행 예시:
+
+```powershell
+$env:DB_URL="jdbc:h2:tcp://localhost/~/local"
+$env:DB_USERNAME="ubuntu"
+$env:DB_PASSWORD="비밀번호"
+$env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\firebase-service-account.json"
+Set-Location backend
+.\gradlew.bat bootRun
+```
+
+모바일은 `mobile/.env.example`을 `mobile/.env`로 복사한 뒤 환경에 맞는 주소를 설정한다. 실제 `.env` 파일은 Git에 포함되지 않는다.
+
+```dotenv
+BACKEND_API_URL=http://localhost:8080
+```
+
+Android 또는 iOS 앱은 환경값이 네이티브 빌드에 포함되므로 `.env` 변경 후 앱을 다시 빌드해야 한다.
+
+</br>
+
 <h2>모바일</h2>
 
 ![image](https://github.com/H-sooyeon/Susukang/assets/56586470/ce491d75-a3fb-45eb-bccb-08d5d40738e1)

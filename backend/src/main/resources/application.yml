@@ -7,7 +7,7 @@ spring:
   jpa:
     database-platform: ${DB_DIALECT:org.hibernate.dialect.H2Dialect}
     hibernate:
-      ddl-auto: ${DB_DDL_AUTO:update}
+      ddl-auto: ${DB_DDL_AUTO:validate}
   h2:
     console:
       enabled: ${H2_CONSOLE_ENABLED:false}
