@@ -17,12 +17,15 @@ import java.time.LocalDateTime;
 import com.site.transmate.account.Account;
 import com.site.transmate.account.AccountController;
 import com.site.transmate.account.AccountRepository;
+import com.site.transmate.account.AccountService;
 import com.site.transmate.meeting.MeetingController;
 import com.site.transmate.meeting.Meeting;
 import com.site.transmate.meeting.MeetingRepository;
+import com.site.transmate.meeting.MeetingService;
 import com.site.transmate.schedule.Schedule;
 import com.site.transmate.schedule.ScheduleController;
 import com.site.transmate.schedule.ScheduleRepository;
+import com.site.transmate.schedule.ScheduleService;
 import com.site.transmate.translation.TranslateController;
 import com.site.transmate.translation.TranslateService;
 import com.site.transmate.translation.dto.TranslateRequest;
@@ -31,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.ArgumentCaptor;
 
@@ -40,6 +45,8 @@ import org.mockito.ArgumentCaptor;
         MeetingController.class,
         ScheduleController.class
 })
+@Import({AccountService.class, MeetingService.class, ScheduleService.class})
+@TestPropertySource(properties = "transmate.auth.enabled=false")
 class ApiContractTest {
 
     @Autowired
@@ -90,6 +97,26 @@ class ApiContractTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"accountid\":\"firebase-user-id\"}"))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void accountResponseDoesNotExposePasswordOrEntityRelations() throws Exception {
+        Account account = new Account();
+        account.setId(1);
+        account.setAccountid("firebase-user-id");
+        account.setName("사용자");
+        account.setPassword("secret");
+        when(accountRepository.findByAccountid("firebase-user-id"))
+                .thenReturn(java.util.Optional.of(account));
+
+        mockMvc.perform(get("/account/firebase-user-id"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.accountid").value("firebase-user-id"))
+                .andExpect(jsonPath("$.name").value("사용자"))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.meetingList").doesNotExist())
+                .andExpect(jsonPath("$.scheduleList").doesNotExist());
     }
 
     @Test
