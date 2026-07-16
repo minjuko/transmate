@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import com.site.transmate.auth.FirebaseAuthenticationInterceptor;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class AccountController {
 
     @PostMapping("/account/create")
     public ResponseEntity<Void> create(
-            @RequestBody AccountCreateRequest request,
+            @Valid @RequestBody AccountCreateRequest request,
             @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
         accountService.create(userId, request);

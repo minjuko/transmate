@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import com.site.transmate.auth.FirebaseAuthenticationInterceptor;
+import com.site.transmate.api.OnCreate;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.groups.Default;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -40,7 +44,7 @@ public class ScheduleController {
     @PostMapping("/schedule/create/{accountid}")
     public ResponseEntity<Void> createSchedule(
             @PathVariable String accountid,
-            @RequestBody ScheduleRequest request,
+            @Validated({Default.class, OnCreate.class}) @RequestBody ScheduleRequest request,
             @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
         scheduleService.create(userId, accountid, request);
@@ -50,7 +54,7 @@ public class ScheduleController {
     @PatchMapping("/schedule/patch/{id}")
     public ResponseEntity<Void> updateSchedule(
             @PathVariable int id,
-            @RequestBody ScheduleRequest request,
+            @Valid @RequestBody ScheduleRequest request,
             @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
         scheduleService.update(userId, id, request);
