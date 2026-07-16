@@ -12,7 +12,6 @@ import {Dropdown} from 'react-native-element-dropdown';
 import SettingContext from '../contexts/SettingContext';
 import STTContext from '../contexts/STTContext';
 import firestore from '@react-native-firebase/firestore';
-import {useUserContext} from '../contexts/UserContext';
 
 const TranslationSettingsScreen = ({navigation}) => {
   const [languageCode, setLanguageCode] = useState(null);
@@ -29,7 +28,6 @@ const TranslationSettingsScreen = ({navigation}) => {
   let email;
 
   const {setChanner, RemoveMessages} = useContext(STTContext);
-  const {user} = useUserContext();
 
   useEffect(() => {
     navigation.setOptions({
@@ -73,7 +71,7 @@ const TranslationSettingsScreen = ({navigation}) => {
           onChangeText={setChannerText}
         />
       </View>
-      <View style={{backgroundColor: '#fff', padding: 20, borderRadius: 15}}>
+      <View style={styles.optionsContainer}>
         <Dropdown
           style={styles.dropdown}
           placeholderStyle={styles.placeholderStyle}
@@ -119,12 +117,7 @@ const TranslationSettingsScreen = ({navigation}) => {
           }}
         />
         <TouchableOpacity
-          style={{
-            backgroundColor: '#0F3460',
-            padding: 20,
-            borderRadius: 15,
-            alignItems: 'center',
-          }}
+          style={styles.submitButton}
           onPress={() =>
             languageCode && categoryCode
               ? Alert.alert(
@@ -169,14 +162,7 @@ const TranslationSettingsScreen = ({navigation}) => {
                   {text: '확인', onPress: () => {}, style: 'default'},
                 ])
           }>
-          <Text
-            style={{
-              color: '#fff',
-              textTransform: 'uppercase',
-              fontWeight: '600',
-            }}>
-            Submit
-          </Text>
+          <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -192,6 +178,22 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'center',
     alignContent: 'center',
+  },
+  optionsContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 15,
+  },
+  submitButton: {
+    backgroundColor: '#0F3460',
+    padding: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#fff',
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
   logo: {
     alignItems: 'center',

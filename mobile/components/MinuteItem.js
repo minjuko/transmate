@@ -11,7 +11,6 @@ const MinuteItem = ({getDate, file}) => {
   const navigation = useNavigation();
 
   const [visible, setVisible] = useState(false);
-  const [filePath, setFilePath] = useState('');
   const {id, title, department, content, date} = file;
 
   const [itemTitle, setitemTitle] = useState(title);
@@ -110,10 +109,8 @@ const MinuteItem = ({getDate, file}) => {
       //File directory
       directory: 'docs',
     };
-    let file = await RNHTMLtoPDF.convert(options);
-
-    setFilePath(file.filePath);
-    const path = JSON.stringify(file.filePath);
+    let pdfFile = await RNHTMLtoPDF.convert(options);
+    const path = JSON.stringify(pdfFile.filePath);
     Alert.alert('다운 받은 파일 경로', `${path}`);
   };
 
@@ -138,7 +135,7 @@ const MinuteItem = ({getDate, file}) => {
       </View>
       <View style={styles.rightIcon}>
         <TouchableOpacity
-          style={[styles.summary, {marginRight: 5}]}
+          style={[styles.summary, styles.summarySpacing]}
           onPress={showDialog}>
           <Icon name="edit" size={30} style={styles.modifyIcon} />
           <Text style={styles.summaryText}>수정</Text>
@@ -157,7 +154,7 @@ const MinuteItem = ({getDate, file}) => {
           </Dialog.Container>
         </View>
         <TouchableOpacity
-          style={[styles.summary, {marginRight: 5}]}
+          style={[styles.summary, styles.summarySpacing]}
           onPress={handleSummarize}>
           <Icon name="wysiwyg" size={30} color="#C0C0C0" />
           <Text style={styles.summaryText}>요약</Text>
@@ -209,6 +206,9 @@ const styles = StyleSheet.create({
   },
   summary: {
     alignItems: 'center',
+  },
+  summarySpacing: {
+    marginRight: 5,
   },
   summaryText: {
     fontSize: 12,

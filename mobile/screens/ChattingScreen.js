@@ -15,13 +15,7 @@ import {
   PermissionsAndroid,
   SafeAreaView,
 } from 'react-native';
-import GoogleCloudSpeechToText, {
-  SpeechRecognizeEvent,
-  VoiceStartEvent,
-  SpeechErrorEvent,
-  VoiceEvent,
-  SpeechStartEvent,
-} from 'react-native-google-cloud-speech-to-text';
+import GoogleCloudSpeechToText from 'react-native-google-cloud-speech-to-text';
 import {Dropdown} from 'react-native-element-dropdown';
 import Dialog from 'react-native-dialog';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -36,7 +30,7 @@ import {GiftedChat} from 'react-native-gifted-chat';
 const GOOGLE_TRANSLATE_API_KEY = '';
 
 const ChattingScreen = ({route, navigation}) => {
-  const [transcript, setResult] = useState('');
+  const [, setResult] = useState('');
   const [isRecording, setIsRecording] = useState(false);
 
   const [language, setLanguage] = useState(route.params.languageName);
@@ -60,7 +54,6 @@ const ChattingScreen = ({route, navigation}) => {
 
   const nextId = useRef(1);
   const uid = route.params.uid;
-  const name = route.params.name;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', () => {
@@ -246,7 +239,7 @@ const ChattingScreen = ({route, navigation}) => {
             <Text style={styles.headerButton}>변경</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={showSave}>
-            <Text style={[styles.headerButton, {marginLeft: 12}]}>저장</Text>
+            <Text style={[styles.headerButton, styles.saveButton]}>저장</Text>
           </TouchableOpacity>
         </View>
       ),
@@ -360,7 +353,6 @@ const ChattingScreen = ({route, navigation}) => {
       const text = await textPromise;
       setttext(text);
       msg.text += '\n\n' + text;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       const usermsg = {
         ...msg,
         sentBy: user.uid,
@@ -452,9 +444,7 @@ const ChattingScreen = ({route, navigation}) => {
     <SafeAreaView style={styles.Container}>
       <StatusBar backgroundColor="#1976D2" barStyle="light-content" />
       <View>
-        <Dialog.Container
-          visible={visible}
-          style={{backgroundColor: '#fff', padding: 20, borderRadius: 15}}>
+        <Dialog.Container visible={visible} style={styles.dialogContainer}>
           <Dialog.Title style={styles.changeTitle}>언어 설정 변경</Dialog.Title>
           <Dropdown
             style={styles.dropdown}
@@ -507,9 +497,7 @@ const ChattingScreen = ({route, navigation}) => {
         </Dialog.Container>
       </View>
       <View>
-        <Dialog.Container
-          visible={saveVisible}
-          style={{backgroundColor: '#fff', padding: 20, borderRadius: 15}}>
+        <Dialog.Container visible={saveVisible} style={styles.dialogContainer}>
           <Dialog.Title style={styles.changeTitle}>문서 저장</Dialog.Title>
           <Dialog.Input
             placeholder="문서 제목"
@@ -533,7 +521,7 @@ const ChattingScreen = ({route, navigation}) => {
         />
           </View>*/}
       <GiftedChat
-        style={{flex: 1}}
+        style={styles.chat}
         messages={messages}
         onSend={text => onSend(text)}
         user={{
@@ -560,6 +548,17 @@ const styles = StyleSheet.create({
     color: 'white',
     marginLeft: 5,
     marginRight: 2,
+  },
+  saveButton: {
+    marginLeft: 12,
+  },
+  dialogContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 15,
+  },
+  chat: {
+    flex: 1,
   },
   title: {
     marginTop: 10,

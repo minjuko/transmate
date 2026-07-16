@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Pressable,
-  TextInput,
 } from 'react-native';
 import CalendarView from '../components/CalendarView';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -28,23 +27,27 @@ const CalendarScreen = ({navigation}) => {
 
   const today = new Date();
 
-  const formatDate = date => {
-    if (!date) return '';
+  const formatDate = selectedValue => {
+    if (!selectedValue) {
+      return '';
+    }
 
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const year = selectedValue.getFullYear();
+    const month = selectedValue.getMonth() + 1;
+    const day = selectedValue.getDate();
 
     return `${year}-${month < 10 ? '0' + month : month}-${
       day < 10 ? '0' + day : day
     }`;
   };
 
-  const formatTime = time => {
-    if (!time) return '없음';
+  const formatTime = selectedValue => {
+    if (!selectedValue) {
+      return '없음';
+    }
 
-    const hours = time.getHours();
-    const minutes = time.getMinutes();
+    const hours = selectedValue.getHours();
+    const minutes = selectedValue.getMinutes();
 
     return `${hours < 10 ? '0' + hours : hours}:${
       minutes < 10 ? '0' + minutes : minutes
@@ -140,12 +143,12 @@ const CalendarScreen = ({navigation}) => {
     setVisible(false);
   };
 
-  const onConfirm = selectedDate => {
+  const onConfirm = selectedValue => {
     setPickerVisible(false);
     if (mode === 'date') {
-      setDate(selectedDate);
+      setDate(selectedValue);
     } else {
-      setTime(selectedDate);
+      setTime(selectedValue);
     }
   };
 

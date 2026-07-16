@@ -5,7 +5,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ScheduleContext from '../contexts/ScheduleContext';
@@ -25,8 +24,12 @@ const CalenderItem = ({schedule}) => {
   const {onModify} = useContext(ScheduleContext);
 
   const formatDate = selectedDate => {
-    if (!selectedDate) return '';
-    if (selectedDate === date) return date;
+    if (!selectedDate) {
+      return '';
+    }
+    if (selectedDate === date) {
+      return date;
+    }
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth() + 1;
     const day = selectedDate.getDate();
@@ -36,8 +39,12 @@ const CalenderItem = ({schedule}) => {
   };
 
   const formatTime = selectedTime => {
-    if (!selectedTime) return '없음';
-    if (selectedTime === time) return time;
+    if (!selectedTime) {
+      return '없음';
+    }
+    if (selectedTime === time) {
+      return time;
+    }
     const hours = selectedTime.getHours();
     const minutes = selectedTime.getMinutes();
     return `${hours < 10 ? '0' + hours : hours}:${
@@ -92,18 +99,6 @@ const CalenderItem = ({schedule}) => {
   const onPressTime = () => {
     setMode('time');
     setPickerVisible(true);
-  };
-
-  const handleInputFocus = e => {
-    try {
-      console.log('Clicked on TextInput');
-      setVisible(true);
-      console.log('왜 안돼');
-      console.log(visible);
-    } catch (error) {
-      console.log('오류 발생:', error);
-      // 오류 처리를 원하는 방식으로 작성합니다.
-    }
   };
 
   return (
