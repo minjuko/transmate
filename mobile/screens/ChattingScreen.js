@@ -26,8 +26,10 @@ import backendApi from '../lib/backendApi';
 import {useUserContext} from '../contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import {GiftedChat} from 'react-native-gifted-chat';
+import Config from 'react-native-config';
 
-const GOOGLE_TRANSLATE_API_KEY = '';
+const GOOGLE_TRANSLATE_API_KEY = Config.GOOGLE_TRANSLATE_API_KEY ?? '';
+const GOOGLE_SPEECH_API_KEY = Config.GOOGLE_SPEECH_API_KEY ?? '';
 
 const ChattingScreen = ({route, navigation}) => {
   const [, setResult] = useState('');
@@ -66,7 +68,7 @@ const ChattingScreen = ({route, navigation}) => {
   }, [navigation, isRecording]);
 
   useEffect(() => {
-    GoogleCloudSpeechToText.setApiKey('');
+    GoogleCloudSpeechToText.setApiKey(GOOGLE_SPEECH_API_KEY);
     GoogleCloudSpeechToText.onVoice(onVoice);
     GoogleCloudSpeechToText.onVoiceStart(onVoiceStart);
     GoogleCloudSpeechToText.onVoiceEnd(onVoiceEnd);
@@ -178,6 +180,14 @@ const ChattingScreen = ({route, navigation}) => {
   };
 
   const startRecognizing = async () => {
+    if (!GOOGLE_SPEECH_API_KEY || !GOOGLE_TRANSLATE_API_KEY) {
+      Alert.alert(
+        '설정 오류',
+        'Google 음성 인식 및 번역 API 키를 확인해주세요.',
+      );
+      return;
+    }
+
     setIsRecording(true);
     await GoogleCloudSpeechToText.start({
       speechToFile: false,

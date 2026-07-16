@@ -1,7 +1,8 @@
 import React, {useState, createContext} from 'react';
 import axios from 'axios';
+import Config from 'react-native-config';
 
-const REST_API_KEY = '';
+const REST_API_KEY = Config.KAKAO_REST_API_KEY ?? '';
 
 const KakaoContext = createContext();
 
@@ -9,6 +10,10 @@ export const KakaoContextProvider = ({children}) => {
   const [summary, setSummary] = useState();
 
   const onCreate = async ({prompt}) => {
+    if (!REST_API_KEY) {
+      throw new Error('KAKAO_REST_API_KEY is not configured');
+    }
+
     try {
       const response = await kogptApi(prompt, 160, 0.4);
       setSummary(response);
