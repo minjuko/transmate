@@ -1,7 +1,12 @@
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
+import Config from 'react-native-config';
 
-const backendApi = axios.create({baseURL: 'http://3.39.132.36:8080'});
+if (!Config.BACKEND_API_URL) {
+  throw new Error('BACKEND_API_URL is not configured');
+}
+
+const backendApi = axios.create({baseURL: Config.BACKEND_API_URL});
 
 export async function attachFirebaseToken(config) {
   const user = auth().currentUser;

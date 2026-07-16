@@ -1,10 +1,17 @@
 import auth from '@react-native-firebase/auth';
-import {attachFirebaseToken, handleBackendError} from '../lib/backendApi';
+import backendApi, {
+  attachFirebaseToken,
+  handleBackendError,
+} from '../lib/backendApi';
 
 describe('backendApi authentication', () => {
   afterEach(() => {
     auth().currentUser = null;
     jest.clearAllMocks();
+  });
+
+  it('uses the configured backend API URL', () => {
+    expect(backendApi.defaults.baseURL).toBe('http://localhost:8080');
   });
 
   it('adds the current Firebase ID token to backend requests', async () => {
