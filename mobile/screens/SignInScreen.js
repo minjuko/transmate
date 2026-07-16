@@ -1,4 +1,4 @@
-import React, {useRef, useState, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   Alert,
   View,
@@ -12,7 +12,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import SignButtons from '../components/SignButtons';
 import SignInForm from '../components/SignForm';
 import {signIn, signUp} from '../lib/auth';
-import {getUser, createUser} from '../lib/users';
 import {useUserContext} from '../contexts/UserContext';
 import backendApi from '../lib/backendApi';
 import FileContext from '../contexts/FileContext';

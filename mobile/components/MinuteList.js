@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, StatusBar, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 import MinuteItem from './MinuteItem';
 import SearchContext from '../contexts/SearchContext';
 

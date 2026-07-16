@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import FileContext from '../contexts/FileContext';
 
 const OpenMinute = ({navigation, route}) => {
-  const {id, title, department, content, date} = route.params.file;
+  const {id, title, department, content} = route.params.file;
 
   const [filecontent, setFileContent] = useState(content);
   const {onModify} = useContext(FileContext);

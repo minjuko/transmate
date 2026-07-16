@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity, Alert, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 const SummaryScreen = ({navigation, route}) => {
-  const [filePath, setFilePath] = useState('');
   const summary = route.params.summary;
   let title = route.params.title;
   const department = route.params.department;
@@ -33,7 +32,6 @@ const SummaryScreen = ({navigation, route}) => {
     };
     let file = await RNHTMLtoPDF.convert(options);
 
-    setFilePath(file.filePath);
     const path = JSON.stringify(file.filePath);
     Alert.alert('다운 받은 파일 경로', `${path}`);
   };

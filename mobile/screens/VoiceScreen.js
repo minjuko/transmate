@@ -61,10 +61,7 @@ const VoiceScreen = () => {
             value={result}
             multiline={true}
             placeholder="say something!"
-            style={{
-              flex: 1,
-              height: '100%',
-            }}
+            style={styles.resultInput}
             onChangeText={text => setResult(text)}
           />
         </View>
@@ -73,15 +70,15 @@ const VoiceScreen = () => {
             <ActivityIndicator size="large" color="black" />
           ) : (
             <TouchableOpacity onPress={startRecording} style={styles.speak}>
-              <Text style={{color: 'white', fontWeight: 'bold'}}>Speak</Text>
+              <Text style={styles.buttonText}>Speak</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity style={styles.stop} onPress={stopRecording}>
-            <Text style={{color: 'white', fontWeight: 'bold'}}>Stop</Text>
+            <Text style={styles.buttonText}>Stop</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.clear} onPress={clear}>
-          <Text style={{color: 'white', fontWeight: 'bold'}}>Clear</Text>
+          <Text style={styles.buttonText}>Clear</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>
@@ -114,6 +111,14 @@ const styles = StyleSheet.create({
     elevation: 2,
     shadowOpacity: 0.4,
     color: '#000',
+  },
+  resultInput: {
+    flex: 1,
+    height: '100%',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   speak: {
     backgroundColor: 'black',
