@@ -64,6 +64,20 @@ class AwsTranslationGatewayTest {
     }
 
     @Test
+    void omitsTerminologyFromAwsRequestWhenNameIsBlank() {
+        when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
+                .thenReturn(new TranslateTextResult().withTranslatedText("번역 결과"));
+        AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
+
+        gateway.translate(new TranslationCommand("source text", "  ", "en", "ko"));
+
+        ArgumentCaptor<TranslateTextRequest> requestCaptor =
+                ArgumentCaptor.forClass(TranslateTextRequest.class);
+        verify(amazonTranslate).translateText(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().getTerminologyNames()).isNullOrEmpty();
+    }
+
+    @Test
     void mapsInvalidAwsRequestWithoutExposingSdkDetails() {
         AmazonServiceException awsFailure = serviceFailure(400);
         when(amazonTranslate.translateText(any(TranslateTextRequest.class)))

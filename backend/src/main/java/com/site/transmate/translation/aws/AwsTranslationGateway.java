@@ -29,9 +29,11 @@ public class AwsTranslationGateway implements TranslationGateway {
     public TranslationResult translate(TranslationCommand command) {
         TranslateTextRequest request = new TranslateTextRequest()
                 .withText(command.text())
-                .withTerminologyNames(command.terminologyName())
                 .withSourceLanguageCode(command.sourceLanguageCode())
                 .withTargetLanguageCode(command.targetLanguageCode());
+        if (command.terminologyName() != null && !command.terminologyName().isBlank()) {
+            request.withTerminologyNames(command.terminologyName());
+        }
 
         TranslateTextResult result;
         try {
