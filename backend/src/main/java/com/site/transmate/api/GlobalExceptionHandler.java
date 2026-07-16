@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.site.transmate.auth.UnauthorizedException;
 import com.site.transmate.auth.ForbiddenException;
+import com.site.transmate.translation.TranslationProviderException;
+import com.site.transmate.translation.TranslationRequestException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -77,6 +79,26 @@ public class GlobalExceptionHandler {
         return errorResponse(
                 HttpStatus.CONFLICT,
                 "요청이 현재 데이터 상태와 충돌합니다.",
+                request
+        );
+    }
+
+    @ExceptionHandler(TranslationRequestException.class)
+    public ResponseEntity<ApiError> handleTranslationRequest(
+            TranslationRequestException exception,
+            HttpServletRequest request
+    ) {
+        return errorResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(TranslationProviderException.class)
+    public ResponseEntity<ApiError> handleTranslationProvider(
+            TranslationProviderException exception,
+            HttpServletRequest request
+    ) {
+        return errorResponse(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                exception.getMessage(),
                 request
         );
     }

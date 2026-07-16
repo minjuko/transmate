@@ -1,11 +1,14 @@
 package com.site.transmate.translation.aws;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.translate.AmazonTranslate;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.translate.model.AppliedTerminology;
 import com.amazonaws.services.translate.model.Term;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
@@ -13,6 +16,8 @@ import com.amazonaws.services.translate.model.TranslateTextResult;
 import com.site.transmate.translation.TranslationCommand;
 import com.site.transmate.translation.TranslationResult;
 import com.site.transmate.translation.TranslationTerm;
+import com.site.transmate.translation.TranslationProviderException;
+import com.site.transmate.translation.TranslationRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -56,5 +61,56 @@ class AwsTranslationGatewayTest {
         assertThat(result.terms()).containsExactly(
                 new TranslationTerm("source term", "대상 용어")
         );
+    }
+
+    @Test
+    void mapsInvalidAwsRequestWithoutExposingSdkDetails() {
+        AmazonServiceException awsFailure = serviceFailure(400);
+        when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
+                .thenThrow(awsFailure);
+        AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
+
+        assertThatThrownBy(() -> gateway.translate(command()))
+                .isInstanceOf(TranslationRequestException.class)
+                .hasMessage("번역 요청을 처리할 수 없습니다.")
+                .hasCause(awsFailure);
+    }
+
+    @Test
+    void mapsAwsServiceOutageToProviderFailure() {
+        AmazonServiceException awsFailure = serviceFailure(500);
+        when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
+                .thenThrow(awsFailure);
+        AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
+
+        assertThatThrownBy(() -> gateway.translate(command()))
+                .isInstanceOf(TranslationProviderException.class)
+                .hasMessage("번역 서비스를 일시적으로 사용할 수 없습니다.")
+                .hasCause(awsFailure);
+    }
+
+    @Test
+    void mapsCredentialsOrNetworkFailureToProviderFailure() {
+        AmazonClientException awsFailure =
+                new AmazonClientException("sensitive credential or network details");
+        when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
+                .thenThrow(awsFailure);
+        AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
+
+        assertThatThrownBy(() -> gateway.translate(command()))
+                .isInstanceOf(TranslationProviderException.class)
+                .hasMessage("번역 서비스를 일시적으로 사용할 수 없습니다.")
+                .hasCause(awsFailure);
+    }
+
+    private AmazonServiceException serviceFailure(int statusCode) {
+        AmazonServiceException exception =
+                new AmazonServiceException("sensitive AWS details");
+        exception.setStatusCode(statusCode);
+        return exception;
+    }
+
+    private TranslationCommand command() {
+        return new TranslationCommand("source text", "category", "en", "ko");
     }
 }
