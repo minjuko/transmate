@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.site.transmate.account.Account;
 import com.site.transmate.account.AccountRepository;
+import com.site.transmate.api.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +34,7 @@ public class ScheduleController {
 
         Account account = accountRepository.findByAccountid(accountid)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                        new ResourceNotFoundException("존재하지 않는 사용자입니다."));
 
         List<Schedule> schedules = account.getScheduleList();
 
@@ -88,13 +89,13 @@ public class ScheduleController {
 
     // 일정 생성
     @PostMapping("/schedule/create/{accountid}")
-    public void createSchedule(
+    public ResponseEntity<Void> createSchedule(
             @PathVariable String accountid,
             @RequestBody Map<String, String> requestData
     ) {
         Account account = accountRepository.findByAccountid(accountid)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                        new ResourceNotFoundException("존재하지 않는 사용자입니다."));
 
         Schedule schedule = new Schedule();
         schedule.setAccount(account);
@@ -118,6 +119,7 @@ public class ScheduleController {
         });
 
         scheduleRepository.save(schedule);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 일정 수정
@@ -126,14 +128,9 @@ public class ScheduleController {
             @PathVariable int id,
             @RequestBody Map<String, String> requestData
     ) {
-        Schedule targetSchedule =
-                scheduleRepository.findById(id).orElse(null);
-
-        if (targetSchedule == null) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
+        Schedule targetSchedule = scheduleRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("존재하지 않는 일정입니다."));
 
         Schedule patchSchedule = new Schedule();
 
@@ -158,9 +155,7 @@ public class ScheduleController {
         targetSchedule.patch(patchSchedule);
         scheduleRepository.save(targetSchedule);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     // 일정 삭제
@@ -168,19 +163,12 @@ public class ScheduleController {
     public ResponseEntity<Void> deleteSchedule(
             @PathVariable int id
     ) {
-        Schedule targetSchedule =
-                scheduleRepository.findById(id).orElse(null);
-
-        if (targetSchedule == null) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .build();
-        }
+        Schedule targetSchedule = scheduleRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("존재하지 않는 일정입니다."));
 
         scheduleRepository.delete(targetSchedule);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }
