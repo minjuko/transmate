@@ -5,9 +5,6 @@ import java.util.List;
 import com.site.transmate.meeting.Meeting;
 import com.site.transmate.schedule.Schedule;
 
-import java.time.LocalDateTime;
-
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,9 +27,6 @@ public class Account {
 	@Id
 	@Column(unique = true)
     private String accountid;
-
-    @Column(length = 20)
-    private String password;
 
     @Column(length = 20)
     private String name;
