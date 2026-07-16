@@ -59,28 +59,26 @@ const SignInScreen = ({navigation, route}) => {
           await backendApi.post('/account/create', {
             accountid: user.uid,
           });
-        } catch (error) {
-          console.error('Error SignUp:', error);
+        } catch {
+          console.error('Error SignUp');
         }
       } else {
         try {
           const response = await backendApi.get(`/meetings/${user.uid}`);
           setFiles(mapMeetings(response.data));
-        } catch (error) {
-          console.error('Error get File:', error);
+        } catch {
+          console.error('Error get File');
         }
 
         try {
           const response = await backendApi.get(`/schedules/${user.uid}`);
-          console.log('schedule data : ', response.data);
           setSchedules(mapSchedules(response.data));
-        } catch (error) {
-          console.error('Error get Schedule:', error);
+        } catch {
+          console.error('Error get Schedule');
         }
       }
 
       setUser(user);
-      console.log(user);
 
       navigation.navigate('MainTabScreen');
       //navigation.navigate('messageScreen');
@@ -93,7 +91,6 @@ const SignInScreen = ({navigation, route}) => {
       };
       const msg = message[e.code] || `${isSignUp ? '가입' : '로그인'} 실패`;
       Alert.alert('실패', msg);
-      console.log(e);
     } finally {
       setLoading(false);
     }

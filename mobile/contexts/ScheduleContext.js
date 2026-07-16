@@ -32,8 +32,8 @@ export const ScheduleContextProvider = ({children}) => {
         date: date,
         time: time,
       });
-    } catch (error) {
-      console.error('Error create Schedule:', error);
+    } catch {
+      console.error('Error create Schedule');
     }
     nextId.current += 1;
     setSchedules([schedule, ...schedules]);
@@ -51,8 +51,8 @@ export const ScheduleContextProvider = ({children}) => {
         date: modified.date,
         time: modified.time,
       });
-    } catch (error) {
-      console.error('Error modify Schedule:', error);
+    } catch {
+      console.error('Error modify Schedule');
     }
 
     setSchedules(nextSchedules);
@@ -63,8 +63,8 @@ export const ScheduleContextProvider = ({children}) => {
 
     try {
       await backendApi.delete(`/schedule/delete/${id}`);
-    } catch (error) {
-      console.error('Error delete Schedule:', error);
+    } catch {
+      console.error('Error delete Schedule');
     }
 
     setSchedules(nextSchedules);

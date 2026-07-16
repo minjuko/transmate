@@ -7,7 +7,6 @@ export function signIn({email, password}) {
 
 export const signUp = async ({email, password}) => {
   const newReg = await auth().createUserWithEmailAndPassword(email, password);
-  console.log(newReg);
   firestore().collection('users').doc(newReg.user.uid).set({
     uid: newReg.user.uid,
     email: newReg.user.email,
