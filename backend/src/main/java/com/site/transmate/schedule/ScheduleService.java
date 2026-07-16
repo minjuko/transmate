@@ -28,8 +28,8 @@ public class ScheduleService {
 
     public List<ScheduleResponse> searchByDate(String userId, String accountId, String date) {
         ownershipGuard.requireOwner(userId, accountId);
-        return scheduleRepository.findByDateLike("%" + date + "%").stream()
-                .filter(schedule -> schedule.getAccount().getAccountid().equals(accountId))
+        return scheduleRepository
+                .findByAccountAccountidAndDateContaining(accountId, date).stream()
                 .map(ScheduleResponse::from)
                 .toList();
     }

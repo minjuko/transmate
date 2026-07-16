@@ -27,8 +27,8 @@ public class MeetingService {
 
     public List<MeetingResponse> searchByTitle(String userId, String accountId, String title) {
         ownershipGuard.requireOwner(userId, accountId);
-        return meetingRepository.findByTitleLike("%" + title + "%").stream()
-                .filter(meeting -> meeting.getAccount().getAccountid().equals(accountId))
+        return meetingRepository
+                .findByAccountAccountidAndTitleContaining(accountId, title).stream()
                 .map(MeetingResponse::from)
                 .toList();
     }
