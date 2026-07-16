@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import com.site.transmate.auth.FirebaseAuthenticationInterceptor;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -21,39 +23,44 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping("/schedules/{accountid}")
-    public List<ScheduleResponse> getSchedules(@PathVariable String accountid) {
-        return scheduleService.getAll(accountid);
+    public List<ScheduleResponse> getSchedules(@PathVariable String accountid,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId) {
+        return scheduleService.getAll(userId, accountid);
     }
 
     @GetMapping("/schedules/date/{accountid}/{subDate}")
     public List<ScheduleResponse> getSchedulesByDate(
             @PathVariable String accountid,
-            @PathVariable String subDate
+            @PathVariable String subDate,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        return scheduleService.searchByDate(accountid, subDate);
+        return scheduleService.searchByDate(userId, accountid, subDate);
     }
 
     @PostMapping("/schedule/create/{accountid}")
     public ResponseEntity<Void> createSchedule(
             @PathVariable String accountid,
-            @RequestBody ScheduleRequest request
+            @RequestBody ScheduleRequest request,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        scheduleService.create(accountid, request);
+        scheduleService.create(userId, accountid, request);
         return ResponseEntity.status(201).build();
     }
 
     @PatchMapping("/schedule/patch/{id}")
     public ResponseEntity<Void> updateSchedule(
             @PathVariable int id,
-            @RequestBody ScheduleRequest request
+            @RequestBody ScheduleRequest request,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        scheduleService.update(id, request);
+        scheduleService.update(userId, id, request);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/schedule/delete/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable int id) {
-        scheduleService.delete(id);
+    public ResponseEntity<Void> deleteSchedule(@PathVariable int id,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId) {
+        scheduleService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
 }

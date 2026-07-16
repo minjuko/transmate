@@ -18,6 +18,8 @@ import com.site.transmate.account.Account;
 import com.site.transmate.account.AccountController;
 import com.site.transmate.account.AccountRepository;
 import com.site.transmate.account.AccountService;
+import com.site.transmate.auth.OwnershipGuard;
+import com.site.transmate.auth.FirebaseAuthenticationInterceptor;
 import com.site.transmate.meeting.MeetingController;
 import com.site.transmate.meeting.Meeting;
 import com.site.transmate.meeting.MeetingRepository;
@@ -36,6 +38,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.ArgumentCaptor;
 
@@ -45,9 +50,20 @@ import org.mockito.ArgumentCaptor;
         MeetingController.class,
         ScheduleController.class
 })
-@Import({AccountService.class, MeetingService.class, ScheduleService.class})
+@Import({AccountService.class, MeetingService.class, ScheduleService.class,
+        OwnershipGuard.class, ApiContractTest.AuthenticatedRequestConfig.class})
 @TestPropertySource(properties = "transmate.auth.enabled=false")
 class ApiContractTest {
+
+    @TestConfiguration
+    static class AuthenticatedRequestConfig {
+        @Bean
+        MockMvcBuilderCustomizer authenticatedRequest() {
+            return builder -> builder.defaultRequest(get("/")
+                    .requestAttr(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE,
+                            "firebase-user-id"));
+        }
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -242,6 +258,9 @@ class ApiContractTest {
         Schedule schedule = new Schedule();
         schedule.setId(3);
         schedule.setTime("09:00");
+        Account owner = new Account();
+        owner.setAccountid("firebase-user-id");
+        schedule.setAccount(owner);
         when(scheduleRepository.findById(3))
                 .thenReturn(java.util.Optional.of(schedule));
 
@@ -259,7 +278,9 @@ class ApiContractTest {
         when(accountRepository.findByAccountid("missing-user"))
                 .thenReturn(java.util.Optional.empty());
 
-        mockMvc.perform(get("/schedules/missing-user"))
+        mockMvc.perform(get("/schedules/missing-user")
+                        .requestAttr(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE,
+                                "missing-user"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
@@ -280,5 +301,14 @@ class ApiContractTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("존재하지 않는 일정입니다."))
                 .andExpect(jsonPath("$.path").value("/schedule/patch/999"));
+    }
+
+    @Test
+    void anotherUsersScheduleIsForbidden() throws Exception {
+        mockMvc.perform(get("/schedules/another-user"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.message")
+                        .value("다른 사용자의 데이터에 접근할 수 없습니다."));
     }
 }

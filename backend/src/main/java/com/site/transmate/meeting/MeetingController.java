@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import com.site.transmate.auth.FirebaseAuthenticationInterceptor;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -20,38 +22,43 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @GetMapping("/meetings/{accountid}")
-    public List<MeetingResponse> list(@PathVariable String accountid) {
-        return meetingService.getAll(accountid);
+    public List<MeetingResponse> list(@PathVariable String accountid,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId) {
+        return meetingService.getAll(userId, accountid);
     }
 
     @GetMapping("/meetings/title/{accountid}/{subTitle}")
     public List<MeetingResponse> search(
             @PathVariable String accountid,
-            @PathVariable String subTitle
+            @PathVariable String subTitle,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        return meetingService.searchByTitle(accountid, subTitle);
+        return meetingService.searchByTitle(userId, accountid, subTitle);
     }
 
     @PostMapping("/meeting/create/{accountid}")
     public ResponseEntity<MeetingResponse> create(
             @PathVariable String accountid,
-            @RequestBody MeetingRequest request
+            @RequestBody MeetingRequest request,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        return ResponseEntity.status(201).body(meetingService.create(accountid, request));
+        return ResponseEntity.status(201).body(meetingService.create(userId, accountid, request));
     }
 
     @PatchMapping("/meeting/patch/{id}")
     public ResponseEntity<Void> update(
             @PathVariable int id,
-            @RequestBody MeetingRequest request
+            @RequestBody MeetingRequest request,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        meetingService.update(id, request);
+        meetingService.update(userId, id, request);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/meeting/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
-        meetingService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable int id,
+            @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId) {
+        meetingService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
 }
