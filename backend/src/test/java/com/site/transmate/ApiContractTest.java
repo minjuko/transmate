@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -22,6 +23,9 @@ import com.site.transmate.meeting.MeetingRepository;
 import com.site.transmate.schedule.Schedule;
 import com.site.transmate.schedule.ScheduleController;
 import com.site.transmate.schedule.ScheduleRepository;
+import com.site.transmate.translation.TranslateController;
+import com.site.transmate.translation.TranslateService;
+import com.site.transmate.translation.dto.TranslateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,11 +33,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.ArgumentCaptor;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @WebMvcTest({
-        MainController.class,
+        TranslateController.class,
         AccountController.class,
         MeetingController.class,
         ScheduleController.class
@@ -42,9 +44,6 @@ class ApiContractTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private RequestMappingHandlerMapping handlerMapping;
 
     @MockBean
     private AccountRepository accountRepository;
@@ -55,13 +54,34 @@ class ApiContractTest {
     @MockBean
     private ScheduleRepository scheduleRepository;
 
-    @Test
-    void translateUsesPostAsCalledByMobile() {
-        boolean hasPostTranslate = handlerMapping.getHandlerMethods().keySet().stream()
-                .anyMatch(mapping -> mapping.getPatternValues().contains("/translate")
-                        && mapping.getMethodsCondition().getMethods().contains(RequestMethod.POST));
+    @MockBean
+    private TranslateService translateService;
 
-        assertThat(hasPostTranslate).isTrue();
+    @Test
+    void translateUsesMobileRequestContract() throws Exception {
+        when(translateService.translate(any(TranslateRequest.class)))
+                .thenReturn("번역 결과");
+
+        mockMvc.perform(post("/translate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "Text": "source text",
+                                  "TerminologyNames": "category",
+                                  "SourceLanguageCode": "en",
+                                  "TargetLanguageCode": "ko"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().string("번역 결과"));
+
+        ArgumentCaptor<TranslateRequest> requestCaptor =
+                ArgumentCaptor.forClass(TranslateRequest.class);
+        verify(translateService).translate(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().text()).isEqualTo("source text");
+        assertThat(requestCaptor.getValue().terminologyNames()).isEqualTo("category");
+        assertThat(requestCaptor.getValue().sourceLanguageCode()).isEqualTo("en");
+        assertThat(requestCaptor.getValue().targetLanguageCode()).isEqualTo("ko");
     }
 
     @Test
