@@ -106,9 +106,12 @@ Set-Location backend
 
 ```dotenv
 BACKEND_API_URL=http://localhost:8080
+GOOGLE_TRANSLATE_API_KEY=
+GOOGLE_SPEECH_API_KEY=
+KAKAO_REST_API_KEY=
 ```
 
-Android 또는 iOS 앱은 환경값이 네이티브 빌드에 포함되므로 `.env` 변경 후 앱을 다시 빌드해야 한다.
+Google 번역·음성 인식 및 Kakao 요약 기능을 사용할 때는 해당 API 키를 환경별 `.env`에 설정한다. Android 또는 iOS 앱은 환경값이 네이티브 빌드에 포함되므로 `.env` 변경 후 앱을 다시 빌드해야 한다. 모바일 앱에 포함되는 API 키는 완전한 비밀로 간주할 수 없으므로 공급자 콘솔에서 앱·API·사용량 제한을 설정해야 한다.
 
 </br>
 

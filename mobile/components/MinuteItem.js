@@ -32,6 +32,7 @@ const MinuteItem = ({getDate, file}) => {
       });
     } catch {
       console.error('Error creating summary');
+      Alert.alert('요약 실패', 'Kakao API 키와 네트워크 상태를 확인해주세요.');
     }
   };
 
