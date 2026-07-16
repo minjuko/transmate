@@ -26,3 +26,6 @@ mobile/android/app/debug.keystore
 # OS
 .DS_Store
 Thumbs.db
+
+# docs
+docs
