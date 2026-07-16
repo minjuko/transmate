@@ -8,8 +8,6 @@ import ChattingScreen from './ChattingScreen';
 import MainTabScreen from './MainTabScreen';
 import OpenMinute from './OpenMinute';
 import SummaryScreen from './SummaryScreen';
-import MessageScreen from './MessageScreen';
-import ChatScreen from './ChatScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,28 +46,6 @@ const RootStack = () => {
           />
         </>
       )}
-      <Stack.Screen
-        name="messageScreen"
-        component={MessageScreen}
-        options={{
-          headerShown: false,
-          headerStyle: {
-            backgroundColor: '#1976D2',
-          },
-          headerTintColor: '#ffff',
-        }}
-      />
-      <Stack.Screen
-        name="Chats"
-        component={ChatScreen}
-        options={{
-          headerShown: false,
-          headerStyle: {
-            backgroundColor: '#1976D2',
-          },
-          headerTintColor: '#ffff',
-        }}
-      />
       <Stack.Screen
         name="MainTabScreen"
         component={MainTabScreen}

@@ -31,13 +31,13 @@ export const FileContextProvider = ({children}) => {
 
     try {
       const setFileUrl = `http://3.39.132.36:8080/meeting/create/${user.uid}`;
-      await axios.post(setFileUrl, {
-        meetingid: uuidv4(),
+      const response = await axios.post(setFileUrl, {
         title: title,
         category: department,
         data: content,
         date: date,
       });
+      file.id = response.data.meetingid;
     } catch (error) {
       console.error('Error createFile:', error);
     }
