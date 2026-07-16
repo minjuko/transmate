@@ -18,10 +18,7 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Account {
-	
-    @Column(insertable = false, updatable = false)
-    private Integer id;
-	
+
 	@Id
 	@Column(unique = true)
     private String accountid;
