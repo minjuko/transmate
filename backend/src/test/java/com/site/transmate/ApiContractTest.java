@@ -3,6 +3,7 @@ package com.site.transmate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -113,6 +114,18 @@ class ApiContractTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"accountid\":\"firebase-user-id\"}"))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void repeatedAccountCreationKeepsTheCreatedResponseContract() throws Exception {
+        when(accountRepository.existsById("firebase-user-id")).thenReturn(true);
+
+        mockMvc.perform(post("/account/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"accountid\":\"firebase-user-id\"}"))
+                .andExpect(status().isCreated());
+
+        verify(accountRepository, never()).save(any(Account.class));
     }
 
     @Test

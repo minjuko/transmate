@@ -5,6 +5,7 @@ import com.site.transmate.account.dto.AccountResponse;
 import com.site.transmate.api.ResourceNotFoundException;
 import com.site.transmate.auth.OwnershipGuard;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -23,9 +24,15 @@ public class AccountService {
 
     public void create(String userId, AccountCreateRequest request) {
         ownershipGuard.requireOwner(userId, request.accountid());
+        if (accountRepository.existsById(request.accountid())) return;
+
         Account account = new Account();
         account.setAccountid(request.accountid());
         account.setName(request.name());
-        accountRepository.save(account);
+        try {
+            accountRepository.save(account);
+        } catch (DataIntegrityViolationException exception) {
+            if (!accountRepository.existsById(request.accountid())) throw exception;
+        }
     }
 }
