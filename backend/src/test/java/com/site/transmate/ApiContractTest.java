@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcBuilderCustomizer;
@@ -129,6 +130,25 @@ class ApiContractTest {
     }
 
     @Test
+    void dataIntegrityFailureReturnsConflictWithoutDatabaseDetails() throws Exception {
+        when(accountRepository.save(any(Account.class)))
+                .thenThrow(new DataIntegrityViolationException("sensitive database details"));
+
+        mockMvc.perform(post("/account/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"accountid\":\"firebase-user-id\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message")
+                        .value("요청이 현재 데이터 상태와 충돌합니다."))
+                .andExpect(jsonPath("$.message")
+                        .value(org.hamcrest.Matchers.not(
+                                org.hamcrest.Matchers.containsString("sensitive"))))
+                .andExpect(jsonPath("$.path").value("/account/create"));
+    }
+
+    @Test
     void legacyPasswordFieldIsIgnoredWhenAccountIsCreated() throws Exception {
         mockMvc.perform(post("/account/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -150,7 +170,6 @@ class ApiContractTest {
     @Test
     void accountResponseDoesNotExposeSensitiveOrEntityFields() throws Exception {
         Account account = new Account();
-        account.setId(1);
         account.setAccountid("firebase-user-id");
         account.setName("사용자");
         when(accountRepository.findByAccountid("firebase-user-id"))
@@ -158,7 +177,7 @@ class ApiContractTest {
 
         mockMvc.perform(get("/account/firebase-user-id"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").doesNotExist())
                 .andExpect(jsonPath("$.accountid").value("firebase-user-id"))
                 .andExpect(jsonPath("$.name").value("사용자"))
                 .andExpect(jsonPath("$.password").doesNotExist())
