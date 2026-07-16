@@ -116,12 +116,30 @@ class ApiContractTest {
     }
 
     @Test
-    void accountResponseDoesNotExposePasswordOrEntityRelations() throws Exception {
+    void legacyPasswordFieldIsIgnoredWhenAccountIsCreated() throws Exception {
+        mockMvc.perform(post("/account/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "accountid": "firebase-user-id",
+                                  "name": "user",
+                                  "password": "must-not-be-stored"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
+        verify(accountRepository).save(accountCaptor.capture());
+        assertThat(accountCaptor.getValue().getAccountid()).isEqualTo("firebase-user-id");
+        assertThat(accountCaptor.getValue().getName()).isEqualTo("user");
+    }
+
+    @Test
+    void accountResponseDoesNotExposeSensitiveOrEntityFields() throws Exception {
         Account account = new Account();
         account.setId(1);
         account.setAccountid("firebase-user-id");
         account.setName("사용자");
-        account.setPassword("secret");
         when(accountRepository.findByAccountid("firebase-user-id"))
                 .thenReturn(java.util.Optional.of(account));
 
