@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -13,7 +14,7 @@ public class TranslateController {
     private final TranslateService translateService;
 
     @PostMapping("/translate")
-    public String translate(@RequestBody TranslateRequest request) {
+    public String translate(@Valid @RequestBody TranslateRequest request) {
         return translateService.translate(request);
     }
 }

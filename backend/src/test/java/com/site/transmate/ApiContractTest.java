@@ -311,4 +311,42 @@ class ApiContractTest {
                 .andExpect(jsonPath("$.message")
                         .value("다른 사용자의 데이터에 접근할 수 없습니다."));
     }
+
+    @Test
+    void accountCreationRejectsBlankAccountId() throws Exception {
+        mockMvc.perform(post("/account/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"accountid\":\"\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("요청 값이 올바르지 않습니다."))
+                .andExpect(jsonPath("$.fieldErrors.accountid")
+                        .value("accountid는 필수입니다."));
+    }
+
+    @Test
+    void scheduleCreationRejectsInvalidTime() throws Exception {
+        mockMvc.perform(post("/schedule/create/firebase-user-id")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "주간 회의",
+                                  "date": "2026-07-16",
+                                  "time": "25:99"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.time")
+                        .value("time은 HH:mm 형식이어야 합니다."));
+    }
+
+    @Test
+    void translateRejectsMissingRequiredFields() throws Exception {
+        mockMvc.perform(post("/translate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"Text\":\"\",\"TargetLanguageCode\":\"ko\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.text").value("Text는 필수입니다."))
+                .andExpect(jsonPath("$.fieldErrors.sourceLanguageCode")
+                        .value("SourceLanguageCode는 필수입니다."));
+    }
 }

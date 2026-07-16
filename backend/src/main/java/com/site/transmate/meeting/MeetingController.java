@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import com.site.transmate.auth.FirebaseAuthenticationInterceptor;
+import com.site.transmate.api.OnCreate;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.groups.Default;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -39,7 +43,7 @@ public class MeetingController {
     @PostMapping("/meeting/create/{accountid}")
     public ResponseEntity<MeetingResponse> create(
             @PathVariable String accountid,
-            @RequestBody MeetingRequest request,
+            @Validated({Default.class, OnCreate.class}) @RequestBody MeetingRequest request,
             @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
         return ResponseEntity.status(201).body(meetingService.create(userId, accountid, request));
@@ -48,7 +52,7 @@ public class MeetingController {
     @PatchMapping("/meeting/patch/{id}")
     public ResponseEntity<Void> update(
             @PathVariable int id,
-            @RequestBody MeetingRequest request,
+            @Valid @RequestBody MeetingRequest request,
             @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
         meetingService.update(userId, id, request);
