@@ -60,7 +60,6 @@ const CalendarScreen = ({navigation}) => {
         backgroundColor: '#1976D2',
       },
       headerTintColor: '#ffff',
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <View>
           <TouchableOpacity onPress={showDialog} style={styles.addButton}>

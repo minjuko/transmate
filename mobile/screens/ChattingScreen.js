@@ -83,14 +83,10 @@ const ChattingScreen = ({route, navigation}) => {
     requestMicrophonePermission();
   }, []);
 
-  const onSpeechError = _error => {
-    console.log('onSpeechError: ', _error);
-  };
+  const onSpeechError = () => {};
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSpeechRecognized = async result => {
-    console.log('onSpeechRecognized: ', result);
-
     const detectedLanguage = await detectLanguage(result.transcript);
     const sourceLanguage =
       detectedLanguage === 'ko' ? 'ko' : languageCode.substr(0, 2);
@@ -144,8 +140,8 @@ const ChattingScreen = ({route, navigation}) => {
         TargetLanguageCode: targetLanguage,
       });
       return response.data;
-    } catch (error) {
-      console.error('Error translate:', error);
+    } catch {
+      console.error('Error translate');
     }
   };
 
@@ -161,27 +157,20 @@ const ChattingScreen = ({route, navigation}) => {
       const detectedLanguage = response.data.data.detections[0][0].language;
 
       return detectedLanguage;
-    } catch (error) {
-      console.error('Error detecting language:', error);
+    } catch {
+      console.error('Error detecting language');
     }
   };
 
   const onSpeechRecognizing = result => {
-    console.log('onSpeechRecognizing: ', result);
     setResult(result.transcript);
   };
 
-  const onVoiceStart = _event => {
-    console.log('onVoiceStart', _event);
-  };
+  const onVoiceStart = () => {};
 
-  const onVoice = _event => {
-    console.log('onVoice', _event);
-  };
+  const onVoice = () => {};
 
-  const onVoiceEnd = () => {
-    console.log('onVoiceEnd: ');
-  };
+  const onVoiceEnd = () => {};
 
   const stopRecognizing = async () => {
     setIsRecording(false);
@@ -190,35 +179,24 @@ const ChattingScreen = ({route, navigation}) => {
 
   const startRecognizing = async () => {
     setIsRecording(true);
-    const result = await GoogleCloudSpeechToText.start({
+    await GoogleCloudSpeechToText.start({
       speechToFile: false,
       languageCode: languageCode,
     });
 
-    const result2 = await GoogleCloudSpeechToText.start({
+    await GoogleCloudSpeechToText.start({
       speechToFile: false,
       languageCode: 'ko-KR',
     });
-
-    console.log('startRecognizing', result);
-    console.log('startRecognizing2:', result2);
   };
 
   const requestMicrophonePermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
+      await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Microphone permission has been granted.');
-      } else {
-        console.log('Microphone permission has been denied.');
-      }
-    } catch (error) {
-      console.log(
-        'Error occurred while requesting microphone permission.',
-        error,
-      );
+    } catch {
+      console.error('Error occurred while requesting microphone permission');
     }
   };
 
@@ -313,7 +291,6 @@ const ChattingScreen = ({route, navigation}) => {
   };
 
   const onTranslate = async msg => {
-    console.log('msg: ', msg);
     const sourceLanguage = languageCode.substr(0, 2) === 'ko' ? 'en' : 'ko';
 
     const targetLanguage = languageCode.substr(0, 2) === 'ko' ? 'ko' : 'en'; //languageCode.substr(0, 2)
@@ -392,7 +369,6 @@ const ChattingScreen = ({route, navigation}) => {
           };
         });
         setMessages(allTheMsgs);
-        //console.log('allTheMsgs: ', allTheMsgs);
         // let receiveMsg;
         // let splitMsg;
         // if (allTheMsgs[0]) {
@@ -422,7 +398,6 @@ const ChattingScreen = ({route, navigation}) => {
             return processedText;
           });
           setMessage(processedArray);
-          console.log('processedArray: ', processedArray);
         } else {
           allTheMsgs[0].sentTo === user.uid
             ? AddMsg('상대측:\n' + allTheMsgs[0].text.split('\n\n')[1])
