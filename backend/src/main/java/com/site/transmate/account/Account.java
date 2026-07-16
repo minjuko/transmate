@@ -8,8 +8,6 @@ import com.site.transmate.schedule.Schedule;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
@@ -21,7 +19,7 @@ import lombok.Setter;
 @Entity
 public class Account {
 	
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(insertable = false, updatable = false)
     private Integer id;
 	
 	@Id
