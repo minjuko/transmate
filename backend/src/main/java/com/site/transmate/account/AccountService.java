@@ -26,7 +26,6 @@ public class AccountService {
         Account account = new Account();
         account.setAccountid(request.accountid());
         account.setName(request.name());
-        account.setPassword(request.password());
         accountRepository.save(account);
     }
 }
