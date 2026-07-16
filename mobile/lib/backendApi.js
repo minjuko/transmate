@@ -14,4 +14,13 @@ export async function attachFirebaseToken(config) {
 
 backendApi.interceptors.request.use(attachFirebaseToken);
 
+export async function handleBackendError(error) {
+  if (error.response?.status === 401) {
+    await auth().signOut();
+  }
+  return Promise.reject(error);
+}
+
+backendApi.interceptors.response.use(response => response, handleBackendError);
+
 export default backendApi;
