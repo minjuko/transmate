@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Voice from '@react-native-voice/voice';
 
 const Dictaphone = () => {
@@ -25,27 +25,46 @@ const Dictaphone = () => {
   const stopRecording = async () => {
     try {
       await Voice.stop();
-    } catch (error) {
-      setError(error);
+    } catch (stopError) {
+      setError(stopError);
     }
   };
 
   return (
-    <View style={{alignItems: 'center', margin: 20}}>
-      <Text style={{fontSize: 20, color: 'green', fontWeight: '500'}}>
-        Voice input
-      </Text>
-      <Text style={{fontSize: 30}}>{message}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Voice input</Text>
+      <Text style={styles.message}>{message}</Text>
       <Text>{error.message}</Text>
       <TouchableOpacity
-        style={{marginTop: 30}}
+        style={styles.recordButton}
         onPress={isRecording ? stopRecording : startRecording}>
-        <Text style={{color: 'red'}}>
+        <Text style={styles.recordButtonText}>
           {isRecording ? 'Stop Recording' : 'Start Recording'}
         </Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    margin: 20,
+  },
+  title: {
+    fontSize: 20,
+    color: 'green',
+    fontWeight: '500',
+  },
+  message: {
+    fontSize: 30,
+  },
+  recordButton: {
+    marginTop: 30,
+  },
+  recordButtonText: {
+    color: 'red',
+  },
+});
 
 export default Dictaphone;
