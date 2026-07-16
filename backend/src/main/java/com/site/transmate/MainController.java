@@ -2,7 +2,7 @@ package com.site.transmate;
 
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController // Rest API용 컨트롤러, 데이터(JSON) 반환
 public class MainController {
 
-    @PatchMapping("/translate")
+    @PostMapping("/translate")
     public String translate(@RequestBody Map<String, String> requestData) {
 
         TranslateRequest translateRequest = new TranslateRequest();
