@@ -1,5 +1,9 @@
 /* eslint-env jest */
 
+jest.mock('react-native-config', () => ({
+  BACKEND_API_URL: 'http://localhost:8080',
+}));
+
 const mockDocumentReference = {
   get: jest.fn(async () => ({data: () => undefined})),
   set: jest.fn(async () => undefined),
