@@ -35,40 +35,26 @@ public class MeetingController {
 	
 	//GET
 	@GetMapping("/meetings/{accountid}")
-	public List<Meeting> list(@PathVariable String accountid) {
+	public List<MeetingResponse> list(@PathVariable String accountid) {
 		Optional<Account> oq = this.accountRepository.findByAccountid(accountid);
 		Account q = oq.get();
 		List<Meeting> meetingList = q.getMeetingList();
-		List<Meeting> returnList = new ArrayList<Meeting>();
+		List<MeetingResponse> returnList = new ArrayList<>();
 		for(int i = 0; i < meetingList.size(); i++) {
 			Meeting meeting = meetingList.get(i);
-			Meeting data = new Meeting();
-			data.setTitle(meeting.getTitle());
-			data.setData(meeting.getData());
-			data.setSummary_data(meeting.getSummary_data());
-			data.setId(meeting.getId());
-			data.setCategory(meeting.getCategory());
-			data.setCreateDate(meeting.getCreateDate());
-			returnList.add(data);
+			returnList.add(MeetingResponse.from(meeting));
 		}
 		return returnList;
 	}
 	
 	@GetMapping("/meetings/title/{accountid}/{subTitle}")
-	public List<Meeting> list2(@PathVariable String accountid , @PathVariable String subTitle) {
+	public List<MeetingResponse> list2(@PathVariable String accountid , @PathVariable String subTitle) {
 		List<Meeting> meetings = this.meetingRepository.findByTitleLike("%"+subTitle+"%");
-		List<Meeting> returnList = new ArrayList<Meeting>();
+		List<MeetingResponse> returnList = new ArrayList<>();
 		for(int i = 0; i < meetings.size(); i++) {
 			Meeting meeting = meetings.get(i);
 			if(meeting.getAccount().getAccountid().equals(accountid)) {
-				Meeting data = new Meeting();
-				data.setTitle(meeting.getTitle());
-				data.setData(meeting.getData());
-				data.setSummary_data(meeting.getSummary_data());
-				data.setId(meeting.getId());
-				data.setCategory(meeting.getCategory());
-				data.setCreateDate(meeting.getCreateDate());
-				returnList.add(data);
+				returnList.add(MeetingResponse.from(meeting));
 			}
 		}
 		return returnList;
@@ -77,7 +63,7 @@ public class MeetingController {
 	
 	//POST
 	@PostMapping("/meeting/create/{accountid}")
-	public void create(@PathVariable String accountid, @RequestBody Map<String,String> requestData) {
+	public ResponseEntity<MeetingResponse> create(@PathVariable String accountid, @RequestBody Map<String,String> requestData) {
 		Optional<Account> oq = this.accountRepository.findByAccountid(accountid);
 		Account q = oq.get();
 	    Meeting meeting = new Meeting();
@@ -96,8 +82,14 @@ public class MeetingController {
 			if("category".equals(key)) {
 					meeting.setCategory(value);
 			}
+			if("date".equals(key)) {
+				meeting.setDate(value);
+			}
 	    });
-		this.meetingRepository.save(meeting);
+		Meeting createdMeeting = this.meetingRepository.save(meeting);
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body(MeetingResponse.from(createdMeeting));
 	}
 	
 	
@@ -118,6 +110,9 @@ public class MeetingController {
 			}
 			if("category".equals(key)) {
 				meeting.setCategory(value);
+			}
+			if("date".equals(key)) {
+				meeting.setDate(value);
 			}
 	    });	
 	    target.patch(meeting);

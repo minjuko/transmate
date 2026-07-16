@@ -32,6 +32,9 @@ public class Meeting {
     private String summary_data;
 
     private LocalDateTime createDate;
+
+    @Column(length = 20)
+    private String date;
     
     @Column(length = 20)
 	private String category;
@@ -46,6 +49,8 @@ public class Meeting {
 			this.data = meeting.data;
 		if(meeting.category!=null)
 			this.category = meeting.category;
+		if(meeting.date!=null)
+			this.date = meeting.date;
 		
 	}
 }
