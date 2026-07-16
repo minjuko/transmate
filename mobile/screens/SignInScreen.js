@@ -17,6 +17,7 @@ import {useUserContext} from '../contexts/UserContext';
 import backendApi from '../lib/backendApi';
 import FileContext from '../contexts/FileContext';
 import ScheduleContext from '../contexts/ScheduleContext';
+import {mapMeetings, mapSchedules} from '../lib/backendMappers';
 
 const SignInScreen = ({navigation, route}) => {
   const {isSignUp} = route.params ?? {};
@@ -65,15 +66,7 @@ const SignInScreen = ({navigation, route}) => {
       } else {
         try {
           const response = await backendApi.get(`/meetings/${user.uid}`);
-          const transformedData = response.data.map(item => ({
-            id: item.meetingid,
-            title: item.title,
-            department: item.category,
-            content: item.data,
-            date: item.date,
-          }));
-          const reversedData = transformedData.reverse();
-          setFiles(reversedData);
+          setFiles(mapMeetings(response.data));
         } catch (error) {
           console.error('Error get File:', error);
         }
@@ -81,14 +74,7 @@ const SignInScreen = ({navigation, route}) => {
         try {
           const response = await backendApi.get(`/schedules/${user.uid}`);
           console.log('schedule data : ', response.data);
-          const transformedData = response.data.map(item => ({
-            id: item.id,
-            title: item.title,
-            date: item.date,
-            time: item.time,
-          }));
-          const reversedData = transformedData.reverse();
-          setSchedules(reversedData);
+          setSchedules(mapSchedules(response.data));
         } catch (error) {
           console.error('Error get Schedule:', error);
         }
