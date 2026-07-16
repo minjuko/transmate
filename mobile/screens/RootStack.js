@@ -79,7 +79,6 @@ const RootStack = () => {
           },
           headerTintColor: '#ffff',
         }}
-        style={{flex: 1}}
       />
       <Stack.Screen
         name="Chatting"

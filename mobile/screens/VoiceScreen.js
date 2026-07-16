@@ -13,12 +13,9 @@ import Voice from '@react-native-voice/voice';
 const VoiceScreen = () => {
   const [result, setResult] = useState('');
   const [isLoading, setLoading] = useState(false);
-  const speechStartHandler = e => {
-    console.log('speechStart successful', e);
-  };
-  const speechEndHandler = e => {
+  const speechStartHandler = () => {};
+  const speechEndHandler = () => {
     setLoading(false);
-    console.log('stop handler', e);
   };
   const speechResultsHandler = e => {
     const text = e.value[0];
@@ -28,16 +25,16 @@ const VoiceScreen = () => {
     setLoading(true);
     try {
       await Voice.start('en-Us');
-    } catch (error) {
-      console.log('error', error);
+    } catch {
+      console.error('Error starting voice recognition');
     }
   };
   const stopRecording = async () => {
     try {
       await Voice.stop();
       setLoading(false);
-    } catch (error) {
-      console.log('error', error);
+    } catch {
+      console.error('Error stopping voice recognition');
     }
   };
   const clear = () => {

@@ -28,8 +28,8 @@ export const FileContextProvider = ({children}) => {
 
     try {
       file = await createMeeting(user.uid, meeting, localId);
-    } catch (error) {
-      console.error('Error createFile:', error);
+    } catch {
+      console.error('Error createFile');
     }
 
     setFiles([file, ...files]);
@@ -42,15 +42,14 @@ export const FileContextProvider = ({children}) => {
     );
 
     try {
-      console.log(modified);
       await backendApi.patch(`/meeting/patch/${modified.id}`, {
         data: modified.content,
         title: modified.title,
         category: modified.department,
         date: modified.date,
       });
-    } catch (error) {
-      console.error('Error modifyFile:', error);
+    } catch {
+      console.error('Error modifyFile');
     }
 
     setFiles(nextFiles);
@@ -61,8 +60,8 @@ export const FileContextProvider = ({children}) => {
 
     try {
       await backendApi.delete(`/meeting/delete/${id}`);
-    } catch (error) {
-      console.error('Error removeFile:', error);
+    } catch {
+      console.error('Error removeFile');
     }
 
     setFiles(nextFiles);

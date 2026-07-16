@@ -23,8 +23,8 @@ const SpeechBubble = ({
     try {
       Tts.setDefaultVoice(languageCode + '-default');
       Tts.setDefaultLanguage(languageCode);
-    } catch (error) {
-      console.error('Error occurred during TTS: ', error);
+    } catch {
+      console.error('Error occurred during TTS');
     }
 
     if (isRecording) {

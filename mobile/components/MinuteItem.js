@@ -25,15 +25,13 @@ const MinuteItem = ({getDate, file}) => {
         prompt: content + '\n한 줄 요약:',
       });
 
-      console.log(createdSummary);
-
       navigation.navigate('Summary', {
         title: title,
         department: department,
         summary: createdSummary,
       });
-    } catch (error) {
-      console.error('Error: ', error);
+    } catch {
+      console.error('Error creating summary');
     }
   };
 
@@ -78,7 +76,6 @@ const MinuteItem = ({getDate, file}) => {
 
   // const isPermitted = async () => {
   //   if (Platform.OS === 'android') {
-  //     console.log('android');
   //     try {
   //       const granted = await PermissionsAndroid.request(
   //         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -87,7 +84,6 @@ const MinuteItem = ({getDate, file}) => {
   //           message: 'App needs access to Storage data',
   //         },
   //       );
-  //       console.log(PermissionsAndroid.RESULTS.GRANTED);
   //       return granted === PermissionsAndroid.RESULTS.GRANTED;
   //     } catch (err) {
   //       alert('Write permission err', err);

@@ -80,10 +80,8 @@ const CalenderItem = ({schedule}) => {
     setPickerVisible(false);
     if (mode === 'date') {
       setItemDate(formatDate(selectedDate));
-      console.log(itemDate);
     } else {
       setItemTime(formatTime(selectedDate));
-      console.log(itemTime);
     }
   };
 

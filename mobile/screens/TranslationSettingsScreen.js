@@ -129,8 +129,6 @@ const TranslationSettingsScreen = ({navigation}) => {
                       onPress: async () => {
                         await getUsers();
                         handleButtonPress();
-                        console.log('uid: ', uid);
-                        console.log('email: ', email);
                         navigation.navigate('Chatting', {
                           languageName: languageName,
                           categoryName: categoryName,
