@@ -1,7 +1,7 @@
 import React from 'react';
 import {createContext, useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
-import axios from 'axios';
+import backendApi from '../lib/backendApi';
 import {useUserContext} from '../contexts/UserContext';
 
 const FileContext = createContext();
@@ -30,8 +30,7 @@ export const FileContextProvider = ({children}) => {
     };
 
     try {
-      const setFileUrl = `http://3.39.132.36:8080/meeting/create/${user.uid}`;
-      const response = await axios.post(setFileUrl, {
+      const response = await backendApi.post(`/meeting/create/${user.uid}`, {
         title: title,
         category: department,
         data: content,
@@ -52,9 +51,8 @@ export const FileContextProvider = ({children}) => {
     );
 
     try {
-      const modifyFileUrl = `http://3.39.132.36:8080/meeting/patch/${modified.id}`;
       console.log(modified);
-      await axios.patch(modifyFileUrl, {
+      await backendApi.patch(`/meeting/patch/${modified.id}`, {
         data: modified.content,
         title: modified.title,
         category: modified.department,
@@ -71,8 +69,7 @@ export const FileContextProvider = ({children}) => {
     const nextFiles = files.filter(file => file.id !== id);
 
     try {
-      const deleteUrl = `http://3.39.132.36:8080/meeting/delete/${id}`;
-      await axios.delete(deleteUrl);
+      await backendApi.delete(`/meeting/delete/${id}`);
     } catch (error) {
       console.error('Error removeFile:', error);
     }

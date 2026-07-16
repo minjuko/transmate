@@ -14,7 +14,7 @@ import SignInForm from '../components/SignForm';
 import {signIn, signUp} from '../lib/auth';
 import {getUser, createUser} from '../lib/users';
 import {useUserContext} from '../contexts/UserContext';
-import axios from 'axios';
+import backendApi from '../lib/backendApi';
 import FileContext from '../contexts/FileContext';
 import ScheduleContext from '../contexts/ScheduleContext';
 
@@ -56,8 +56,7 @@ const SignInScreen = ({navigation, route}) => {
       const {user} = isSignUp ? await signUp(info) : await signIn(info);
       if (isSignUp) {
         try {
-          const SignUpUrl = 'http://3.39.132.36:8080/account/create';
-          await axios.post(SignUpUrl, {
+          await backendApi.post('/account/create', {
             accountid: user.uid,
           });
         } catch (error) {
@@ -65,8 +64,7 @@ const SignInScreen = ({navigation, route}) => {
         }
       } else {
         try {
-          const getFileUrl = `http://3.39.132.36:8080/meetings/${user.uid}`;
-          const response = await axios.get(getFileUrl);
+          const response = await backendApi.get(`/meetings/${user.uid}`);
           const transformedData = response.data.map(item => ({
             id: item.meetingid,
             title: item.title,
@@ -81,8 +79,7 @@ const SignInScreen = ({navigation, route}) => {
         }
 
         try {
-          const getScheduleUrl = `http://3.39.132.36:8080/schedules/${user.uid}`;
-          const response = await axios.get(getScheduleUrl);
+          const response = await backendApi.get(`/schedules/${user.uid}`);
           console.log('schedule data : ', response.data);
           const transformedData = response.data.map(item => ({
             id: item.id,

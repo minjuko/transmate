@@ -1,6 +1,6 @@
 import React from 'react';
 import {createContext, useState, useRef} from 'react';
-import axios from 'axios';
+import backendApi from '../lib/backendApi';
 import {useUserContext} from './UserContext';
 
 const ScheduleContext = createContext();
@@ -26,8 +26,7 @@ export const ScheduleContextProvider = ({children}) => {
     };
 
     try {
-      const createScheduleUrl = `http://3.39.132.36:8080/schedule/create/${user.uid}`;
-      await axios.post(createScheduleUrl, {
+      await backendApi.post(`/schedule/create/${user.uid}`, {
         id: nextId.current,
         title: title,
         date: date,
@@ -47,8 +46,7 @@ export const ScheduleContextProvider = ({children}) => {
     );
 
     try {
-      const modifiedScheduleUrl = `http://3.39.132.36:8080/schedule/patch/${modified.id}`;
-      await axios.patch(modifiedScheduleUrl, {
+      await backendApi.patch(`/schedule/patch/${modified.id}`, {
         title: modified.title,
         date: modified.date,
         time: modified.time,
@@ -64,8 +62,7 @@ export const ScheduleContextProvider = ({children}) => {
     const nextSchedules = schedules.filter(schedule => schedule.id !== id);
 
     try {
-      const deleteScheduleUrl = `http://3.39.132.36:8080/schedule/delete/${id}`;
-      await axios.delete(deleteScheduleUrl);
+      await backendApi.delete(`/schedule/delete/${id}`);
     } catch (error) {
       console.error('Error delete Schedule:', error);
     }

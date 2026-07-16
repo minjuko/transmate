@@ -28,6 +28,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import FileContext from '../contexts/FileContext';
 import STTContext from '../contexts/STTContext';
 import axios from 'axios';
+import backendApi from '../lib/backendApi';
 import {useUserContext} from '../contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import {GiftedChat} from 'react-native-gifted-chat';
@@ -143,8 +144,7 @@ const ChattingScreen = ({route, navigation}) => {
 
   const translate = async (text, sourceLanguage, targetLanguage) => {
     try {
-      const translateUrl = `http://3.39.132.36:8080/translate`;
-      const response = await axios.post(translateUrl, {
+      const response = await backendApi.post('/translate', {
         Text: text,
         TerminologyNames: categoryCode,
         SourceLanguageCode: sourceLanguage,
