@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import com.amazonaws.services.translate.AmazonTranslate;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.translate.model.AppliedTerminology;
 import com.amazonaws.services.translate.model.Term;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
 import com.site.transmate.translation.TranslationCommand;
 import com.site.transmate.translation.TranslationGateway;
+import com.site.transmate.translation.TranslationProviderException;
+import com.site.transmate.translation.TranslationRequestException;
 import com.site.transmate.translation.TranslationResult;
 import com.site.transmate.translation.TranslationTerm;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +33,38 @@ public class AwsTranslationGateway implements TranslationGateway {
                 .withSourceLanguageCode(command.sourceLanguageCode())
                 .withTargetLanguageCode(command.targetLanguageCode());
 
-        TranslateTextResult result = amazonTranslate.translateText(request);
+        TranslateTextResult result;
+        try {
+            result = amazonTranslate.translateText(request);
+        } catch (AmazonServiceException exception) {
+            if (isInvalidRequest(exception)) {
+                throw new TranslationRequestException(
+                        "번역 요청을 처리할 수 없습니다.",
+                        exception
+                );
+            }
+            throw providerUnavailable(exception);
+        } catch (AmazonClientException exception) {
+            throw providerUnavailable(exception);
+        }
 
         return new TranslationResult(
                 result.getTranslatedText(),
                 appliedTerms(result)
+        );
+    }
+
+    private boolean isInvalidRequest(AmazonServiceException exception) {
+        return exception.getStatusCode() >= 400 && exception.getStatusCode() < 500
+                && exception.getStatusCode() != 401
+                && exception.getStatusCode() != 403
+                && exception.getStatusCode() != 429;
+    }
+
+    private TranslationProviderException providerUnavailable(Exception cause) {
+        return new TranslationProviderException(
+                "번역 서비스를 일시적으로 사용할 수 없습니다.",
+                cause
         );
     }
 
