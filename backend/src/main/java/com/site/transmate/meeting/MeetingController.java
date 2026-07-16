@@ -3,13 +3,8 @@ package com.site.transmate.meeting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,11 +13,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.site.transmate.account.Account;
 import com.site.transmate.account.AccountRepository;
+import com.site.transmate.api.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,8 +31,8 @@ public class MeetingController {
 	//GET
 	@GetMapping("/meetings/{accountid}")
 	public List<MeetingResponse> list(@PathVariable String accountid) {
-		Optional<Account> oq = this.accountRepository.findByAccountid(accountid);
-		Account q = oq.get();
+		Account q = this.accountRepository.findByAccountid(accountid)
+				.orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 사용자입니다."));
 		List<Meeting> meetingList = q.getMeetingList();
 		List<MeetingResponse> returnList = new ArrayList<>();
 		for(int i = 0; i < meetingList.size(); i++) {
@@ -64,8 +59,8 @@ public class MeetingController {
 	//POST
 	@PostMapping("/meeting/create/{accountid}")
 	public ResponseEntity<MeetingResponse> create(@PathVariable String accountid, @RequestBody Map<String,String> requestData) {
-		Optional<Account> oq = this.accountRepository.findByAccountid(accountid);
-		Account q = oq.get();
+		Account q = this.accountRepository.findByAccountid(accountid)
+				.orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 사용자입니다."));
 	    Meeting meeting = new Meeting();
 	    meeting.setAccount(q);
 	    meeting.setCreateDate(LocalDateTime.now());
@@ -95,11 +90,9 @@ public class MeetingController {
 	
 	// PATCH
 	@PatchMapping("/meeting/patch/{id}")
-	public ResponseEntity<Meeting> update(@PathVariable int id, @RequestBody Map<String,String> requestData) {
-		Meeting target = meetingRepository.findById(id).orElse(null);		
-		if(target == null ) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		}
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody Map<String,String> requestData) {
+		Meeting target = meetingRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 회의입니다."));
 	    Meeting meeting = new Meeting();	    
 	    requestData.forEach((key, value) -> {
 			if("data".equals(key)) {
@@ -116,20 +109,18 @@ public class MeetingController {
 			}
 	    });	
 	    target.patch(meeting);
-		Meeting updated = meetingRepository.save(target);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		meetingRepository.save(target);
+		return ResponseEntity.noContent().build();
 	}
 	
 	
 	//DELETE
 	@DeleteMapping("/meeting/delete/{id}")
-	public ResponseEntity<Meeting> delete(@PathVariable int id) {
-		Meeting target = meetingRepository.findById(id).orElse(null);	// id대상이 없으면 null 반환	
-		if(target == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		}
+	public ResponseEntity<Void> delete(@PathVariable int id) {
+		Meeting target = meetingRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 회의입니다."));
 		meetingRepository.delete(target);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		return ResponseEntity.noContent().build();
 	}
 	
 }

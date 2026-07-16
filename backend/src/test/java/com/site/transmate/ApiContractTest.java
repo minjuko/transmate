@@ -69,7 +69,7 @@ class ApiContractTest {
         mockMvc.perform(post("/account/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"accountid\":\"firebase-user-id\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -183,7 +183,7 @@ class ApiContractTest {
                                   "time": "14:30"
                                 }
                                 """))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         ArgumentCaptor<Schedule> scheduleCaptor = ArgumentCaptor.forClass(Schedule.class);
         verify(scheduleRepository).save(scheduleCaptor.capture());
@@ -201,9 +201,37 @@ class ApiContractTest {
         mockMvc.perform(patch("/schedule/patch/3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"time\":\"10:15\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         assertThat(schedule.getTime()).isEqualTo("10:15");
         verify(scheduleRepository).save(schedule);
+    }
+
+    @Test
+    void missingAccountReturnsStandardNotFoundError() throws Exception {
+        when(accountRepository.findByAccountid("missing-user"))
+                .thenReturn(java.util.Optional.empty());
+
+        mockMvc.perform(get("/schedules/missing-user"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 사용자입니다."))
+                .andExpect(jsonPath("$.path").value("/schedules/missing-user"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
+    @Test
+    void missingSchedulePatchReturnsStandardNotFoundError() throws Exception {
+        when(scheduleRepository.findById(999))
+                .thenReturn(java.util.Optional.empty());
+
+        mockMvc.perform(patch("/schedule/patch/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"time\":\"10:15\"}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 일정입니다."))
+                .andExpect(jsonPath("$.path").value("/schedule/patch/999"));
     }
 }
