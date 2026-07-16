@@ -1,6 +1,10 @@
 package com.site.transmate.translation;
 
 import com.site.transmate.translation.dto.TranslateRequest;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +24,48 @@ public class TranslateService {
 
         TranslationResult initialResult = translationGateway.translate(command);
 
-        if (initialResult.terms().isEmpty()) {
+        List<TranslationTerm> terms = usableTerms(initialResult.terms());
+        if (terms.isEmpty()) {
             return initialResult.translatedText();
         }
 
-        TranslationTerm term = initialResult.terms().get(0);
-        String markedSourceText = request.text().replace(
-                term.sourceText(),
-                "[" + term.sourceText() + "]"
-        );
+        String markedSourceText = markSourceTerms(request.text(), terms);
+        if (markedSourceText.equals(request.text())) return initialResult.translatedText();
+
         TranslationResult markedResult = translationGateway.translate(
                 command.withText(markedSourceText)
         );
 
-        return removeTermMarkers(markedResult.translatedText(), term.targetText());
+        return removeTermMarkers(markedResult.translatedText(), terms);
     }
 
-    private String removeTermMarkers(String text, String targetTerm) {
-        return text.replace("[" + targetTerm + "]", targetTerm);
+    private List<TranslationTerm> usableTerms(List<TranslationTerm> terms) {
+        return terms.stream()
+                .filter(term -> term.sourceText() != null && !term.sourceText().isBlank())
+                .filter(term -> term.targetText() != null && !term.targetText().isBlank())
+                .sorted(Comparator.comparingInt(
+                        (TranslationTerm term) -> term.sourceText().length()
+                ).reversed())
+                .toList();
+    }
+
+    private String markSourceTerms(String text, List<TranslationTerm> terms) {
+        String alternatives = terms.stream()
+                .map(TranslationTerm::sourceText)
+                .distinct()
+                .map(Pattern::quote)
+                .reduce((left, right) -> left + "|" + right)
+                .orElseThrow();
+        Matcher matcher = Pattern.compile(alternatives).matcher(text);
+        return matcher.replaceAll(result ->
+                Matcher.quoteReplacement("[" + result.group() + "]"));
+    }
+
+    private String removeTermMarkers(String text, List<TranslationTerm> terms) {
+        String result = text;
+        for (TranslationTerm term : terms) {
+            result = result.replace("[" + term.targetText() + "]", term.targetText());
+        }
+        return result;
     }
 }
