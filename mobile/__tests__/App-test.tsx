@@ -7,8 +7,16 @@ import React from 'react';
 import App from '../App';
 
 // Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+import renderer, {act} from 'react-test-renderer';
 
-it('renders correctly', () => {
-  renderer.create(<App />);
+it('renders correctly', async () => {
+  let app;
+
+  await act(async () => {
+    app = renderer.create(<App />);
+  });
+
+  act(() => {
+    app.unmount();
+  });
 });

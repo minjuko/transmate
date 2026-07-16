@@ -29,6 +29,9 @@ public class Schedule {
     @Column(columnDefinition = "TEXT")
     private String date;
 
+    @Column(length = 5)
+    private String time;
+
     @ManyToOne
     private Account account;
 
@@ -39,6 +42,8 @@ public class Schedule {
 			this.data = schedule.data;
         if(schedule.date!=null)
             this.date = schedule.date;
+		if(schedule.time!=null)
+			this.time = schedule.time;
 	}
 	
 }

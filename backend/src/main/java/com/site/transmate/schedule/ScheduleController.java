@@ -47,6 +47,7 @@ public class ScheduleController {
             responseSchedule.setTitle(schedule.getTitle());
             responseSchedule.setData(schedule.getData());
             responseSchedule.setDate(schedule.getDate());
+            responseSchedule.setTime(schedule.getTime());
 
             responseSchedules.add(responseSchedule);
         }
@@ -76,6 +77,7 @@ public class ScheduleController {
                 responseSchedule.setTitle(schedule.getTitle());
                 responseSchedule.setData(schedule.getData());
                 responseSchedule.setDate(schedule.getDate());
+                responseSchedule.setTime(schedule.getTime());
 
                 responseSchedules.add(responseSchedule);
             }
@@ -108,6 +110,10 @@ public class ScheduleController {
 
             if ("title".equals(key)) {
                 schedule.setTitle(value);
+            }
+
+            if ("time".equals(key)) {
+                schedule.setTime(value);
             }
         });
 
@@ -142,6 +148,10 @@ public class ScheduleController {
 
             if ("date".equals(key)) {
                 patchSchedule.setDate(value);
+            }
+
+            if ("time".equals(key)) {
+                patchSchedule.setTime(value);
             }
         });
 
