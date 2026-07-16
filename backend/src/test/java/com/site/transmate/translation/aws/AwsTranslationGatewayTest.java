@@ -20,6 +20,8 @@ import com.site.transmate.translation.TranslationProviderException;
 import com.site.transmate.translation.TranslationRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -93,6 +95,22 @@ class AwsTranslationGatewayTest {
     @Test
     void mapsAwsServiceOutageToProviderFailure() {
         AmazonServiceException awsFailure = serviceFailure(500);
+        when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
+                .thenThrow(awsFailure);
+        AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
+
+        assertThatThrownBy(() -> gateway.translate(command()))
+                .isInstanceOf(TranslationProviderException.class)
+                .hasMessage("번역 서비스를 일시적으로 사용할 수 없습니다.")
+                .hasCause(awsFailure);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {401, 403, 429})
+    void mapsAuthenticationAuthorizationAndRateLimitFailuresToProviderFailure(
+            int statusCode
+    ) {
+        AmazonServiceException awsFailure = serviceFailure(statusCode);
         when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
                 .thenThrow(awsFailure);
         AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
