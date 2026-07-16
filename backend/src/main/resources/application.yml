@@ -1,0 +1,4 @@
+transmate:
+  aws:
+    translate:
+      region: ${AWS_TRANSLATE_REGION:ap-northeast-2}
