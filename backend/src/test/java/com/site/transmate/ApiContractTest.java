@@ -355,6 +355,72 @@ class ApiContractTest {
     }
 
     @Test
+    void accountCreationRejectsNameLongerThanDatabaseColumn() throws Exception {
+        mockMvc.perform(post("/account/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "accountid": "firebase-user-id",
+                                  "name": "123456789012345678901"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.name")
+                        .value("name은 20자 이하여야 합니다."));
+    }
+
+    @Test
+    void meetingCreationRejectsTitleLongerThanDatabaseColumn() throws Exception {
+        mockMvc.perform(post("/meeting/create/firebase-user-id")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "123456789012345678901",
+                                  "date": "2026-07-16"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.title")
+                        .value("title은 20자 이하여야 합니다."));
+    }
+
+    @Test
+    void scheduleCreationRejectsTitleLongerThanDatabaseColumn() throws Exception {
+        mockMvc.perform(post("/schedule/create/firebase-user-id")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "123456789012345678901",
+                                  "date": "2026-07-16",
+                                  "time": "09:30"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.title")
+                        .value("title은 20자 이하여야 합니다."));
+    }
+
+    @Test
+    void meetingPatchRejectsTitleLongerThanDatabaseColumn() throws Exception {
+        mockMvc.perform(patch("/meeting/patch/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"123456789012345678901\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.title")
+                        .value("title은 20자 이하여야 합니다."));
+    }
+
+    @Test
+    void schedulePatchRejectsTitleLongerThanDatabaseColumn() throws Exception {
+        mockMvc.perform(patch("/schedule/patch/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"123456789012345678901\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.title")
+                        .value("title은 20자 이하여야 합니다."));
+    }
+
+    @Test
     void scheduleCreationRejectsInvalidTime() throws Exception {
         mockMvc.perform(post("/schedule/create/firebase-user-id")
                         .contentType(MediaType.APPLICATION_JSON)
