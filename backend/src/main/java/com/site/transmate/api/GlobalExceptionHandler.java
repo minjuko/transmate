@@ -8,9 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.site.transmate.auth.UnauthorizedException;
+import com.site.transmate.auth.ForbiddenException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbidden(
+            ForbiddenException exception,
+            HttpServletRequest request
+    ) {
+        return errorResponse(HttpStatus.FORBIDDEN, exception.getMessage(), request);
+    }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiError> handleUnauthorized(

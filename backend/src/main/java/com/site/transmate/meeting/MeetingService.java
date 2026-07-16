@@ -6,6 +6,7 @@ import java.util.List;
 import com.site.transmate.account.Account;
 import com.site.transmate.account.AccountRepository;
 import com.site.transmate.api.ResourceNotFoundException;
+import com.site.transmate.auth.OwnershipGuard;
 import com.site.transmate.meeting.dto.MeetingRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,20 +17,24 @@ public class MeetingService {
 
     private final MeetingRepository meetingRepository;
     private final AccountRepository accountRepository;
+    private final OwnershipGuard ownershipGuard;
 
-    public List<MeetingResponse> getAll(String accountId) {
+    public List<MeetingResponse> getAll(String userId, String accountId) {
+        ownershipGuard.requireOwner(userId, accountId);
         Account account = findAccount(accountId);
         return account.getMeetingList().stream().map(MeetingResponse::from).toList();
     }
 
-    public List<MeetingResponse> searchByTitle(String accountId, String title) {
+    public List<MeetingResponse> searchByTitle(String userId, String accountId, String title) {
+        ownershipGuard.requireOwner(userId, accountId);
         return meetingRepository.findByTitleLike("%" + title + "%").stream()
                 .filter(meeting -> meeting.getAccount().getAccountid().equals(accountId))
                 .map(MeetingResponse::from)
                 .toList();
     }
 
-    public MeetingResponse create(String accountId, MeetingRequest request) {
+    public MeetingResponse create(String userId, String accountId, MeetingRequest request) {
+        ownershipGuard.requireOwner(userId, accountId);
         Meeting meeting = new Meeting();
         meeting.setAccount(findAccount(accountId));
         meeting.setCreateDate(LocalDateTime.now());
@@ -37,14 +42,17 @@ public class MeetingService {
         return MeetingResponse.from(meetingRepository.save(meeting));
     }
 
-    public void update(int id, MeetingRequest request) {
+    public void update(String userId, int id, MeetingRequest request) {
         Meeting meeting = findMeeting(id);
+        ownershipGuard.requireOwner(userId, meeting.getAccount().getAccountid());
         apply(meeting, request);
         meetingRepository.save(meeting);
     }
 
-    public void delete(int id) {
-        meetingRepository.delete(findMeeting(id));
+    public void delete(String userId, int id) {
+        Meeting meeting = findMeeting(id);
+        ownershipGuard.requireOwner(userId, meeting.getAccount().getAccountid());
+        meetingRepository.delete(meeting);
     }
 
     private Account findAccount(String accountId) {

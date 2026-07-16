@@ -5,6 +5,7 @@ import java.util.List;
 import com.site.transmate.account.Account;
 import com.site.transmate.account.AccountRepository;
 import com.site.transmate.api.ResourceNotFoundException;
+import com.site.transmate.auth.OwnershipGuard;
 import com.site.transmate.schedule.dto.ScheduleRequest;
 import com.site.transmate.schedule.dto.ScheduleResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,35 +17,42 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final AccountRepository accountRepository;
+    private final OwnershipGuard ownershipGuard;
 
-    public List<ScheduleResponse> getAll(String accountId) {
+    public List<ScheduleResponse> getAll(String userId, String accountId) {
+        ownershipGuard.requireOwner(userId, accountId);
         return findAccount(accountId).getScheduleList().stream()
                 .map(ScheduleResponse::from)
                 .toList();
     }
 
-    public List<ScheduleResponse> searchByDate(String accountId, String date) {
+    public List<ScheduleResponse> searchByDate(String userId, String accountId, String date) {
+        ownershipGuard.requireOwner(userId, accountId);
         return scheduleRepository.findByDateLike("%" + date + "%").stream()
                 .filter(schedule -> schedule.getAccount().getAccountid().equals(accountId))
                 .map(ScheduleResponse::from)
                 .toList();
     }
 
-    public void create(String accountId, ScheduleRequest request) {
+    public void create(String userId, String accountId, ScheduleRequest request) {
+        ownershipGuard.requireOwner(userId, accountId);
         Schedule schedule = new Schedule();
         schedule.setAccount(findAccount(accountId));
         apply(schedule, request);
         scheduleRepository.save(schedule);
     }
 
-    public void update(int id, ScheduleRequest request) {
+    public void update(String userId, int id, ScheduleRequest request) {
         Schedule schedule = findSchedule(id);
+        ownershipGuard.requireOwner(userId, schedule.getAccount().getAccountid());
         apply(schedule, request);
         scheduleRepository.save(schedule);
     }
 
-    public void delete(int id) {
-        scheduleRepository.delete(findSchedule(id));
+    public void delete(String userId, int id) {
+        Schedule schedule = findSchedule(id);
+        ownershipGuard.requireOwner(userId, schedule.getAccount().getAccountid());
+        scheduleRepository.delete(schedule);
     }
 
     private Account findAccount(String accountId) {
