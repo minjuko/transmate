@@ -9,12 +9,15 @@ const mockCollectionReference = {
   doc: jest.fn(() => mockDocumentReference),
 };
 
-jest.mock('@react-native-firebase/auth', () => () => ({
+const mockAuthInstance = {
+  currentUser: null,
   createUserWithEmailAndPassword: jest.fn(),
   onAuthStateChanged: jest.fn(() => jest.fn()),
   signInWithEmailAndPassword: jest.fn(),
   signOut: jest.fn(),
-}));
+};
+
+jest.mock('@react-native-firebase/auth', () => () => mockAuthInstance);
 
 jest.mock('@react-native-firebase/firestore', () => () => ({
   collection: jest.fn(() => mockCollectionReference),
