@@ -27,5 +27,9 @@ mobile/android/app/debug.keystore
 .DS_Store
 Thumbs.db
 
-# docs
-docs
+# Portfolio documents
+docs/*
+!docs/PORTFOLIO.md
+!docs/TRANSLATE_API.md
+!docs/AWS_INFRASTRUCTURE.md
+!docs/DATASET.md
