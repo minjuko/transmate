@@ -42,13 +42,13 @@ public class ScheduleController {
     }
 
     @PostMapping("/schedule/create/{accountid}")
-    public ResponseEntity<Void> createSchedule(
+    public ResponseEntity<ScheduleResponse> createSchedule(
             @PathVariable String accountid,
             @Validated({Default.class, OnCreate.class}) @RequestBody ScheduleRequest request,
             @RequestAttribute(FirebaseAuthenticationInterceptor.USER_ID_ATTRIBUTE) String userId
     ) {
-        scheduleService.create(userId, accountid, request);
-        return ResponseEntity.status(201).build();
+        return ResponseEntity.status(201)
+                .body(scheduleService.create(userId, accountid, request));
     }
 
     @PatchMapping("/schedule/patch/{id}")

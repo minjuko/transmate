@@ -57,6 +57,7 @@ const MinuteItem = ({getDate, file}) => {
         id: id,
         title: itemTitle,
         department: itemDepartment,
+        content: content,
         date: getDate(today),
       });
     }

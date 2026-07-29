@@ -34,12 +34,12 @@ public class ScheduleService {
                 .toList();
     }
 
-    public void create(String userId, String accountId, ScheduleRequest request) {
+    public ScheduleResponse create(String userId, String accountId, ScheduleRequest request) {
         ownershipGuard.requireOwner(userId, accountId);
         Schedule schedule = new Schedule();
         schedule.setAccount(findAccount(accountId));
         apply(schedule, request);
-        scheduleRepository.save(schedule);
+        return ScheduleResponse.from(scheduleRepository.save(schedule));
     }
 
     public void update(String userId, int id, ScheduleRequest request) {

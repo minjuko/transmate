@@ -408,7 +408,7 @@ const ChattingScreen = ({route, navigation}) => {
             return processedText;
           });
           setMessage(processedArray);
-        } else {
+        } else if (allTheMsgs[0]) {
           allTheMsgs[0].sentTo === user.uid
             ? AddMsg('상대측:\n' + allTheMsgs[0].text.split('\n\n')[1])
             : () => {};

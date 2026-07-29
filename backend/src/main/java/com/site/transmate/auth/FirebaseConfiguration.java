@@ -5,9 +5,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import java.io.IOException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@ConditionalOnProperty(name = "transmate.auth.enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
 public class FirebaseConfiguration {
     @Bean

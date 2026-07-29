@@ -329,6 +329,11 @@ class ApiContractTest {
         Account account = new Account();
         when(accountRepository.findByAccountid("firebase-user-id"))
                 .thenReturn(java.util.Optional.of(account));
+        when(scheduleRepository.save(any(Schedule.class))).thenAnswer(invocation -> {
+            Schedule savedSchedule = invocation.getArgument(0);
+            savedSchedule.setId(12);
+            return savedSchedule;
+        });
 
         mockMvc.perform(post("/schedule/create/firebase-user-id")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -338,8 +343,11 @@ class ApiContractTest {
                                   "date": "2026-07-16",
                                   "time": "14:30"
                                 }
-                                """))
-                .andExpect(status().isCreated());
+                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(12))
+                .andExpect(jsonPath("$.date").value("2026-07-16"))
+                .andExpect(jsonPath("$.time").value("14:30"));
 
         ArgumentCaptor<Schedule> scheduleCaptor = ArgumentCaptor.forClass(Schedule.class);
         verify(scheduleRepository).save(scheduleCaptor.capture());
