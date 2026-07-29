@@ -1,141 +1,152 @@
 # Transmate
 
-비즈니스 회의를 위한 실시간 통번역 및 회의 관리 서비스입니다.
+> 비즈니스 회의를 위한 전문 용어 기반 실시간 통번역 및 회의 관리 서비스
 
-> 이 저장소는 2023년 3인 팀 캡스톤 프로젝트
-> [2023capstone](https://github.com/minjuko/2023capstone)을 기반으로,
-> 제가 담당한 백엔드와 AWS 번역 영역을 중심으로 재구성한 포트폴리오 버전입니다.
-> 원본 팀 프로젝트의 커밋 이력과 작성자 정보는 보존했으며,
-> 2026년 이후의 리팩터링·테스트·문서화는 개인 작업입니다.
+일반 번역에서 정확히 전달되기 어려운 분야별 용어와 약어를 반영하기 위해
+Amazon Translate의 Custom Terminology를 적용했습니다. 사용자는 상대방과
+음성·텍스트로 대화하고, 번역된 대화 내용을 회의록으로 저장해 검색·수정·
+요약·PDF 다운로드할 수 있으며 일정도 함께 관리할 수 있습니다.
 
-## 프로젝트 구분
+## 프로젝트 개요
 
-| 구분 | 기간 | 내용 |
-| --- | --- | --- |
-| 원본 팀 프로젝트 | 2023.03–2023.06 | React Native, Spring Boot, AWS 기반 캡스톤 프로젝트 |
-| 포트폴리오 개선 | 2026.07– | 백엔드 구조 개선, 보안 보완, 테스트 및 CI·문서화 |
+| 항목 | 내용 |
+| --- | --- |
+| 기간 | 2023.03–2023.06 |
+| 형태 | 캡스톤 디자인 팀 프로젝트 |
+| 인원 | 3명: 모바일 1명, 백엔드 2명 |
+| 플랫폼 | React Native 모바일 앱 |
+| 핵심 기능 | 실시간 대화 번역, 전문 용어 적용, 회의록·일정 관리 |
 
-- 원본 저장소: [minjuko/2023capstone](https://github.com/minjuko/2023capstone)
-- 포트폴리오 저장소: [minjuko/transmate](https://github.com/minjuko/transmate)
-- 팀 구성: 모바일 1명, 백엔드 2명
+## 시스템 구성
 
-## 담당 범위
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/31e5de14-e3de-4bc2-826d-b0e06a597c8c" alt="Transmate 시스템 구성도" width="720">
+</p>
 
-### 팀 프로젝트 당시
+- React Native 앱에서 Firebase Authentication으로 사용자를 인증합니다.
+- Spring Boot REST API가 계정·회의록·일정 데이터를 관리합니다.
+- Amazon Translate와 분야별 Custom Terminology로 대화를 번역합니다.
+- 번역된 대화는 회의록으로 저장하고 Kakao KoGPT 기반 요약 기능과 연결했습니다.
 
-- AWS 서버 환경 구축 및 Spring Boot 백엔드 배포
-- Amazon Translate 연동과 Translate API 구현 참여
-- 분야별 번역 데이터셋 및 AWS Custom Terminology 제작 참여
+## 주요 기능
 
-### 포트폴리오 개선
+### 1. 회원가입 및 로그인
 
-- Translate API를 Controller, Service, Gateway, AWS adapter로 분리
-- 모바일과 백엔드의 API 계약 정합성 및 DTO 입력 검증 개선
-- AWS 자격 증명·리전·제한시간·재시도 설정 외부화
-- Firebase 인증과 사용자 데이터 소유권 검증 추가
-- Flyway 마이그레이션 및 JPA 통합 테스트 구축
-- AWS 오류를 안전한 `400`·`503` 응답으로 표준화
-- 백엔드·모바일 테스트와 GitHub Actions CI 구성
+이메일과 비밀번호로 계정을 생성하고 로그인합니다. 사용자 계정은 Firebase
+Authentication으로 관리하며, 로그인한 사용자별로 회의록과 일정을 구분합니다.
 
-모바일은 다른 팀원이 담당한 영역이므로 API 호환성, 인증 헤더, 환경 설정과
-테스트에 필요한 최소 범위만 수정했습니다.
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/ce491d75-a3fb-45eb-bccb-08d5d40738e1" alt="회원가입과 로그인 화면" width="900">
+</p>
 
-## 주요 개선 구조
+### 2. 회의록 관리
 
-```text
-TranslateController
-  → TranslateService
-  → TranslationGateway
-  → AwsTranslationGateway
-  → Amazon Translate
-```
+회의록을 생성·수정·삭제하고 제목과 세부 내용으로 검색할 수 있습니다.
+저장된 문서는 PDF로 내려받거나 별도의 요약 문서로 만들 수 있습니다.
 
-- Controller는 HTTP 계약과 입력 검증을 담당합니다.
-- Service는 번역 순서와 Custom Terminology 후처리를 담당합니다.
-- Gateway는 외부 번역 공급자와 애플리케이션의 경계를 정의합니다.
-- AWS adapter는 SDK 요청 변환과 공급자 오류 분류를 담당합니다.
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/0e90b3bb-b224-428e-ade9-15e93c6e45b9" alt="회의록 생성 수정 삭제 화면" width="900">
+</p>
 
-실제 AWS 자격 증명이나 네트워크 없이도 번역 흐름과 장애 처리를 테스트할 수
-있도록 외부 서비스 경계를 분리했습니다.
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/e9a4bd7c-543b-40fd-8024-3305eff737ec" alt="회의록 검색과 PDF 다운로드 화면" width="900">
+</p>
+
+### 3. 일정 관리
+
+캘린더에서 날짜를 선택해 회의 일정을 등록하고 시간과 내용을 수정하거나
+삭제할 수 있습니다.
+
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/a604a901-01a1-4c05-84b9-42cf53e84a26" alt="캘린더 일정 관리 화면" width="900">
+</p>
+
+### 4. 실시간 대화 번역
+
+대화 상대와 언어, 업무 분야를 선택한 뒤 1:1 채팅을 시작합니다. 음성 입력과
+텍스트 입력을 지원하며, 선택한 분야의 Custom Terminology를 번역 요청에
+적용해 전문 용어의 일관성을 높였습니다.
+
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/8388ec8d-08bb-422e-9610-98383d51c698" alt="대화 설정과 실시간 번역 채팅 화면" width="900">
+</p>
+
+### 5. 대화 저장 및 요약
+
+번역 대화를 제목과 소속 정보와 함께 회의록으로 저장합니다. 저장한 대화는
+문서 목록에서 다시 확인하고 핵심 내용만 요약할 수 있습니다.
+
+<p align="center">
+  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/d7b16d99-f1bd-4b44-b3a5-951ba7ec37ee" alt="번역 대화 저장과 회의록 요약 화면" width="900">
+</p>
 
 ## 기술 스택
 
-- Mobile: React Native, Firebase Authentication
-- Backend: Java 17, Spring Boot, Spring Data JPA, Bean Validation
-- Data: H2, Flyway
-- Cloud: Amazon Translate, AWS SDK
-- Test/CI: JUnit, Mockito, MockMvc, Jest, ESLint, GitHub Actions
+| 구분 | 기술 |
+| --- | --- |
+| Mobile | React Native, React Navigation |
+| Authentication | Firebase Authentication |
+| Realtime Data | Firebase Firestore |
+| Backend | Java 17, Spring Boot, Spring Data JPA |
+| Database | H2, Flyway |
+| Translation | Amazon Translate, AWS Custom Terminology |
+| Speech | Google Cloud Speech-to-Text |
+| Summary | Kakao KoGPT API |
+| Test / CI | JUnit 5, Mockito, MockMvc, Jest, ESLint, GitHub Actions |
 
-## 실행 환경 설정
+## 팀 구성과 역할
 
-### Backend
+| 담당 | 주요 역할 |
+| --- | --- |
+| Mobile | UI 설계, 1:1 음성·텍스트 채팅, 문서·일정 관리, 대화 문서화 |
+| Backend | 계정·회의록·일정 REST API, Amazon Translate 연동 |
+| 데이터·인프라 | 분야별 용어 데이터 제작, AWS 서버 구성과 백엔드 배포 |
 
-| 환경변수 | 필수 | 기본값 | 설명 |
-| --- | --- | --- | --- |
-| `DB_URL` | 예 | 없음 | JDBC 데이터베이스 URL |
-| `DB_USERNAME` | 예 | 없음 | 데이터베이스 사용자명 |
-| `DB_PASSWORD` | 예 | 없음 | 데이터베이스 비밀번호 |
-| `DB_DRIVER_CLASS_NAME` | 아니요 | `org.h2.Driver` | JDBC 드라이버 |
-| `DB_DIALECT` | 아니요 | `org.hibernate.dialect.H2Dialect` | Hibernate dialect |
-| `DB_DDL_AUTO` | 아니요 | `validate` | Hibernate 스키마 정책 |
-| `H2_CONSOLE_ENABLED` | 아니요 | `false` | H2 콘솔 활성화 여부 |
-| `H2_CONSOLE_ALLOW_OTHERS` | 아니요 | `false` | H2 콘솔 외부 접속 허용 |
-| `AWS_TRANSLATE_REGION` | 아니요 | `ap-northeast-2` | Amazon Translate 리전 |
-| `AWS_TRANSLATE_CONNECTION_TIMEOUT_MILLIS` | 아니요 | `3000` | AWS 연결 제한시간(ms) |
-| `AWS_TRANSLATE_SOCKET_TIMEOUT_MILLIS` | 아니요 | `10000` | AWS 응답 제한시간(ms) |
-| `AWS_TRANSLATE_MAX_ERROR_RETRY` | 아니요 | `2` | AWS 최대 재시도 횟수 |
+### 담당 기여
 
-Firebase Admin과 AWS SDK 자격 증명은 설정 파일에 저장하지 않고 각 SDK의 기본
-자격 증명 체인으로 제공합니다.
+팀 프로젝트에서 다음 영역을 맡았습니다.
 
-```powershell
-$env:DB_URL="jdbc:h2:tcp://localhost/~/local"
-$env:DB_USERNAME="REDACTED"
-$env:DB_PASSWORD="비밀번호"
-$env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\firebase-service-account.json"
-Set-Location backend
-.\gradlew.bat bootRun
-```
+- 모바일 앱이 접근할 수 있는 AWS 서버 환경 구축
+- Spring Boot 백엔드 빌드 및 배포
+- 분야별 전문 용어 데이터셋과 Custom Terminology 제작 참여
+- Amazon Translate 연동과 Translate API 구현 참여
 
-### Mobile
+## 백엔드 API
 
-`mobile/.env.example`을 `mobile/.env`로 복사하고 환경에 맞게 설정합니다.
-실제 `.env` 파일은 Git에 포함하지 않습니다.
+| 도메인 | 기능 |
+| --- | --- |
+| Account | 사용자 생성 및 정보 조회 |
+| Meeting | 회의록 생성·조회·검색·수정·삭제 |
+| Schedule | 일정 생성·조회·검색·수정·삭제 |
+| Translate | 원문·언어·용어집을 전달받아 번역 결과 반환 |
 
-```dotenv
-BACKEND_API_URL=http://localhost:8080
-GOOGLE_TRANSLATE_API_KEY=
-GOOGLE_SPEECH_API_KEY=
-KAKAO_REST_API_KEY=
-```
+Firebase ID 토큰으로 사용자를 인증하고, 검증된 UID와 데이터 소유자를
+비교해 다른 사용자의 회의록과 일정에 접근하지 못하도록 처리합니다.
 
-모바일 앱 번들에 포함되는 API 키는 완전한 비밀이 될 수 없으므로 공급자
-콘솔에서 앱·API·사용량 제한을 함께 설정해야 합니다.
+## 포트폴리오 개선
 
-## 문서
+팀 프로젝트의 기능과 화면은 유지하면서 백엔드 중심으로 다음 항목을
+보완했습니다.
 
-- [포트폴리오 상세](docs/PORTFOLIO.md)
-- [Translate API 설계](docs/TRANSLATE_API.md)
-- [AWS 인프라 정리](docs/AWS_INFRASTRUCTURE.md)
-- [데이터셋 및 Custom Terminology](docs/DATASET.md)
+- 번역 로직을 Controller–Service–Gateway–AWS adapter로 분리
+- 모바일과 백엔드의 요청·응답 계약 및 입력 검증 정비
+- Firebase 인증과 사용자 데이터 소유권 검증
+- AWS 자격 증명·리전·timeout·retry 설정 외부화
+- AWS 오류를 안전한 `400`·`503` 응답으로 변환
+- Flyway 기반 스키마 변경 관리와 JPA 통합 테스트
+- 백엔드·모바일 테스트 및 GitHub Actions CI 구성
 
-## 커밋 이력 안내
+모바일은 다른 팀원의 담당 영역이므로 화면과 사용자 흐름을 변경하지 않고,
+API 연동과 명백한 오류를 해결하는 최소 범위만 수정했습니다.
 
-기본 브랜치에는 다음 두 이력이 함께 보존되어 있습니다.
+## 검증
 
-```text
-2023capstone 팀 커밋 ─┐
-                     ├─ 원본 팀 프로젝트 이력 연결
-transmate 개선 커밋 ─┘
-```
+2026-07-30 기준:
 
-이력 연결 커밋은 기존 팀 저장소와 독립적으로 진행된 포트폴리오 저장소의
-관계를 기록하기 위한 것입니다. 해당 커밋은 현재 포트폴리오 소스 트리를
-변경하지 않으며, 각 커밋의 원래 작성자와 작성 시점을 유지합니다.
+- 백엔드 테스트 49개 통과
+- 모바일 Jest 테스트 9개 통과
+- 모바일 ESLint 통과
+- H2·Flyway 환경에서 Spring Boot 서버 기동 확인
 
-## 현재 한계
-
-- 실제 데이터셋의 출처·정제 수치와 당시 AWS 인프라 상세 기록은 남아 있는
-  자료만으로 검증 가능한 범위에서 문서화했습니다.
-- 운영 DB는 프로젝트 범위를 고려해 H2와 Flyway 구성을 유지합니다.
-- 상용 트래픽, 고가용성 또는 무중단 배포를 목표로 한 프로젝트는 아닙니다.
+Amazon Translate 리소스는 현재 종료되어 실제 번역 성공 호출은 재검증하지
+않았습니다. 번역 로직과 AWS adapter는 mock 기반 테스트로 검증합니다.
