@@ -29,7 +29,3 @@ Thumbs.db
 
 # Portfolio documents
 docs/*
-!docs/PORTFOLIO.md
-!docs/TRANSLATE_API.md
-!docs/AWS_INFRASTRUCTURE.md
-!docs/DATASET.md
