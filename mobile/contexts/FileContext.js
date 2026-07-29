@@ -30,9 +30,10 @@ export const FileContextProvider = ({children}) => {
       file = await createMeeting(user.uid, meeting, localId);
     } catch {
       console.error('Error createFile');
+      return;
     }
 
-    setFiles([file, ...files]);
+    setFiles(currentFiles => [file, ...currentFiles]);
   };
 
   const onModify = async modified => {
@@ -48,11 +49,10 @@ export const FileContextProvider = ({children}) => {
         category: modified.department,
         date: modified.date,
       });
+      setFiles(nextFiles);
     } catch {
       console.error('Error modifyFile');
     }
-
-    setFiles(nextFiles);
   };
 
   const onRemove = async id => {
@@ -60,11 +60,10 @@ export const FileContextProvider = ({children}) => {
 
     try {
       await backendApi.delete(`/meeting/delete/${id}`);
+      setFiles(nextFiles);
     } catch {
       console.error('Error removeFile');
     }
-
-    setFiles(nextFiles);
   };
 
   return (

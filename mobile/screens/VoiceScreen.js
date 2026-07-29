@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     display: 'flex',
     flexDirection: 'row',
-    with: '50%',
+    width: '50%',
     justifyContent: 'space-evenly',
     marginTop: 24,
   },
