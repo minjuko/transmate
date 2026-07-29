@@ -1,5 +1,5 @@
 import React from 'react';
-import {createContext, useState, useRef} from 'react';
+import {createContext, useState} from 'react';
 import backendApi from '../lib/backendApi';
 import {useUserContext} from './UserContext';
 
@@ -7,7 +7,6 @@ const ScheduleContext = createContext();
 
 export const ScheduleContextProvider = ({children}) => {
   const {user} = useUserContext();
-  const nextId = useRef(2);
   const [schedules, setSchedules] = useState([
     {
       id: 1,
@@ -18,25 +17,22 @@ export const ScheduleContextProvider = ({children}) => {
   ]);
 
   const onCreate = async ({title, date, time}) => {
-    const schedule = {
-      id: nextId,
-      title,
-      date,
-      time,
-    };
-
     try {
-      await backendApi.post(`/schedule/create/${user.uid}`, {
-        id: nextId.current,
+      const response = await backendApi.post(`/schedule/create/${user.uid}`, {
         title: title,
         date: date,
         time: time,
       });
+      const schedule = {
+        id: response.data.id,
+        title,
+        date,
+        time,
+      };
+      setSchedules(currentSchedules => [schedule, ...currentSchedules]);
     } catch {
       console.error('Error create Schedule');
     }
-    nextId.current += 1;
-    setSchedules([schedule, ...schedules]);
   };
 
   const onModify = async modified => {
@@ -51,11 +47,10 @@ export const ScheduleContextProvider = ({children}) => {
         date: modified.date,
         time: modified.time,
       });
+      setSchedules(nextSchedules);
     } catch {
       console.error('Error modify Schedule');
     }
-
-    setSchedules(nextSchedules);
   };
 
   const onRemove = async id => {
@@ -63,11 +58,10 @@ export const ScheduleContextProvider = ({children}) => {
 
     try {
       await backendApi.delete(`/schedule/delete/${id}`);
+      setSchedules(nextSchedules);
     } catch {
       console.error('Error delete Schedule');
     }
-
-    setSchedules(nextSchedules);
   };
 
   return (

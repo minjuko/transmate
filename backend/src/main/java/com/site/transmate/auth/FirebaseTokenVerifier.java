@@ -3,10 +3,12 @@ package com.site.transmate.auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
+@ConditionalOnProperty(name = "transmate.auth.enabled", havingValue = "true", matchIfMissing = true)
 public class FirebaseTokenVerifier {
     private final FirebaseAuth firebaseAuth;
 
