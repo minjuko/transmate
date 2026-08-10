@@ -24,7 +24,6 @@ public class H2Configuration {
     private Server defaultRun() throws SQLException {
         return Server.createTcpServer(
                 "-tcp",
-                "-tcpAllowOthers",
                 "-ifNotExists",
                 "-tcpPort", 9092 + "").start();
     }
