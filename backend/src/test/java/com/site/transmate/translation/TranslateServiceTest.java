@@ -1,6 +1,7 @@
 package com.site.transmate.translation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -110,6 +111,67 @@ class TranslateServiceTest {
         assertThat(result).isEqualTo("안녕하세요");
         verify(translationGateway).translate(command);
         verifyNoMoreInteractions(translationGateway);
+    }
+
+    @Test
+    void returnsSecondTranslationWhenTermMarkersAreNotPreserved() {
+        TranslationCommand initialCommand = command("Use Amazon Translate");
+        TranslationCommand markedCommand = command("Use [Amazon Translate]");
+        when(translationGateway.translate(initialCommand))
+                .thenReturn(new TranslationResult(
+                        "Amazon Translate를 사용하세요",
+                        List.of(new TranslationTerm("Amazon Translate", "Amazon 번역"))
+                ));
+        when(translationGateway.translate(markedCommand))
+                .thenReturn(new TranslationResult("Amazon 번역을 사용하세요", List.of()));
+
+        String result = translateService.translate(request("Use Amazon Translate"));
+
+        assertThat(result).isEqualTo("Amazon 번역을 사용하세요");
+        verify(translationGateway).translate(initialCommand);
+        verify(translationGateway).translate(markedCommand);
+    }
+
+    @Test
+    void treatsSpecialCharactersInTerminologyAsLiteralText() {
+        TranslationCommand initialCommand = command("Use C++ and node.js");
+        TranslationCommand markedCommand = command("Use [C++] and [node.js]");
+        when(translationGateway.translate(initialCommand))
+                .thenReturn(new TranslationResult(
+                        "C++와 node.js를 사용하세요",
+                        List.of(
+                                new TranslationTerm("C++", "C++"),
+                                new TranslationTerm("node.js", "node.js")
+                        )
+                ));
+        when(translationGateway.translate(markedCommand))
+                .thenReturn(new TranslationResult(
+                        "[C++]와 [node.js]를 사용하세요",
+                        List.of()
+                ));
+
+        String result = translateService.translate(request("Use C++ and node.js"));
+
+        assertThat(result).isEqualTo("C++와 node.js를 사용하세요");
+    }
+
+    @Test
+    void propagatesFailureFromSecondTranslationCall() {
+        TranslationCommand initialCommand = command("Use Amazon Translate");
+        TranslationCommand markedCommand = command("Use [Amazon Translate]");
+        TranslationProviderException failure = new TranslationProviderException(
+                "번역 서비스를 일시적으로 사용할 수 없습니다.",
+                new RuntimeException("provider failure")
+        );
+        when(translationGateway.translate(initialCommand))
+                .thenReturn(new TranslationResult(
+                        "Amazon Translate를 사용하세요",
+                        List.of(new TranslationTerm("Amazon Translate", "Amazon 번역"))
+                ));
+        when(translationGateway.translate(markedCommand)).thenThrow(failure);
+
+        assertThatThrownBy(() -> translateService.translate(request("Use Amazon Translate")))
+                .isSameAs(failure);
     }
 
     private TranslateRequest request(String text) {

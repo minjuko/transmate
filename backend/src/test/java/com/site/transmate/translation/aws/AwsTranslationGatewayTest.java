@@ -135,6 +135,21 @@ class AwsTranslationGatewayTest {
                 .hasCause(awsFailure);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"InvalidParameterValueException", "UnsupportedLanguagePairException"})
+    void mapsInvalidTerminologyAndUnsupportedLanguageToRequestFailure(String errorCode) {
+        AmazonServiceException awsFailure = serviceFailure(400);
+        awsFailure.setErrorCode(errorCode);
+        when(amazonTranslate.translateText(any(TranslateTextRequest.class)))
+                .thenThrow(awsFailure);
+        AwsTranslationGateway gateway = new AwsTranslationGateway(amazonTranslate);
+
+        assertThatThrownBy(() -> gateway.translate(command()))
+                .isInstanceOf(TranslationRequestException.class)
+                .hasMessage("번역 요청을 처리할 수 없습니다.")
+                .hasCause(awsFailure);
+    }
+
     private AmazonServiceException serviceFailure(int statusCode) {
         AmazonServiceException exception =
                 new AmazonServiceException("sensitive AWS details");
