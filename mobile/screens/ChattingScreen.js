@@ -30,6 +30,8 @@ import Config from 'react-native-config';
 
 const GOOGLE_TRANSLATE_API_KEY = Config.GOOGLE_TRANSLATE_API_KEY ?? '';
 const GOOGLE_SPEECH_API_KEY = Config.GOOGLE_SPEECH_API_KEY ?? '';
+const TRANSLATION_ERROR_MESSAGE =
+  '번역을 완료하지 못했습니다. 네트워크와 서버 상태를 확인해주세요.';
 
 const ChattingScreen = ({route, navigation}) => {
   const [, setResult] = useState('');
@@ -109,6 +111,10 @@ const ChattingScreen = ({route, navigation}) => {
       sourceLanguage,
       targetLanguage,
     );
+    if (text == null) {
+      Alert.alert('번역 실패', TRANSLATION_ERROR_MESSAGE);
+      return;
+    }
 
     msg.text += '\n\n' + text;
     sourceLanguage === 'ko'
@@ -144,6 +150,7 @@ const ChattingScreen = ({route, navigation}) => {
       return response.data;
     } catch {
       console.error('Error translate');
+      return null;
     }
   };
 
@@ -192,11 +199,6 @@ const ChattingScreen = ({route, navigation}) => {
     await GoogleCloudSpeechToText.start({
       speechToFile: false,
       languageCode: languageCode,
-    });
-
-    await GoogleCloudSpeechToText.start({
-      speechToFile: false,
-      languageCode: 'ko-KR',
     });
   };
 
@@ -338,6 +340,10 @@ const ChattingScreen = ({route, navigation}) => {
       //AddMessage('사용자: ' + msg.text);
       const textPromise = Promise.resolve(onTranslate(msg));
       const text = await textPromise;
+      if (text == null) {
+        Alert.alert('번역 실패', TRANSLATION_ERROR_MESSAGE);
+        return;
+      }
       setttext(text);
       msg.text += '\n\n' + text;
       const usermsg = {
