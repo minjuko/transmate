@@ -1,146 +1,200 @@
-# Transmate
+# 2023 캡스톤디자인 - 비즈니스 회의를 위한 실시간 통번역 서비스
 
-> 비즈니스 회의를 위한 전문 용어 기반 실시간 통번역 및 회의 관리 서비스
+> 비즈니스 회의의 전문용어를 일관되게 번역하고, 대화를 회의록과 일정으로 이어 주는 실시간 통번역 모바일 서비스 TransMate
 
-일반 번역에서 정확히 전달되기 어려운 분야별 용어와 약어를 반영하기 위해
-Amazon Translate의 Custom Terminology를 적용했습니다. 사용자는 상대방과
-음성·텍스트로 대화하고, 번역된 대화 내용을 회의록으로 저장해 검색·수정·
-요약·PDF 다운로드할 수 있으며 일정도 함께 관리할 수 있습니다.
+<p align="center">
+  <img src="docs/images/readme/01-translation.jpg" alt="전문용어가 반영된 한영 실시간 번역 대화" width="320">
+</p>
 
-## 프로젝트 개요
+TransMate는 2023년 대학교 4학년 캡스톤디자인으로 진행한 3인 팀 프로젝트입니다.
+공공 전문용어 데이터를 분야별로 정제해 AWS Translate Custom Terminology에 적용하고,
+음성·텍스트 대화부터 회의록·요약·다운로드·일정 관리까지 하나의 흐름으로 구현했습니다.
+프로젝트 결과는 졸업논문과 최종보고서로 정리했습니다.
+
+## Project Overview
 
 | 항목 | 내용 |
 | --- | --- |
-| 기간 | 2023.03–2023.06 |
-| 형태 | 캡스톤 디자인 팀 프로젝트 |
-| 인원 | 3명: 모바일 1명, 백엔드 2명 |
-| 플랫폼 | React Native 모바일 앱 |
-| 핵심 기능 | 실시간 대화 번역, 전문 용어 적용, 회의록·일정 관리 |
+| 기간 | 2023.03 - 2023.06 |
+| 팀 규모 | 3명 |
+| 성격 | 캡스톤디자인, 졸업논문·최종보고서 연계 프로젝트 |
+| 문제 | 일반 번역에서 무역·금융 등 분야별 전문용어와 약어가 문맥에 맞지 않게 변형되는 문제 |
+| 목표 | 전문분야를 선택해 용어 일관성을 높이고, 번역 대화를 회의 기록으로 연결 |
 
-## 시스템 구성
+## Team & My Contribution
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/31e5de14-e3de-4bc2-826d-b0e06a597c8c" alt="Transmate 시스템 구성도" width="720">
-</p>
+팀은 모바일과 백엔드를 나누어 개발했고, 번역·데이터·배포 구간을 함께 통합했습니다.
+저는 백엔드, 전문용어 데이터, AWS 서버 환경을 중심으로 담당했습니다.
 
-- React Native 앱에서 Firebase Authentication으로 사용자를 인증합니다.
-- Spring Boot REST API가 계정·회의록·일정 데이터를 관리합니다.
-- Amazon Translate와 분야별 Custom Terminology로 대화를 번역합니다.
-- 번역된 대화는 회의록으로 저장하고 Kakao KoGPT 기반 요약 기능과 연결했습니다.
+### 개인 담당
 
-## 주요 기능
+- 모바일 앱이 접근하는 AWS 서버 환경 구축 및 운영
+- 공공 데이터를 수집·가공해 분야별 전문용어 데이터셋 제작
+- 통역 페이지 흐름과 화면 설계
+- 모바일 앱과 Spring Boot API 연동
+- 프로젝트 통합 과정 참여
 
-### 1. 회원가입 및 로그인
+### 공동 참여
 
-이메일과 비밀번호로 계정을 생성하고 로그인합니다. 사용자 계정은 Firebase
-Authentication으로 관리하며, 로그인한 사용자별로 회의록과 일정을 구분합니다.
+- AWS Translate Custom Terminology 적용 및 전문용어 반영 방식 구현
+- Spring Boot backend와 AWS 관련 기능 개발·통합
+- 팀원 간 모바일-API 인터페이스 조율
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/ce491d75-a3fb-45eb-bccb-08d5d40738e1" alt="회원가입과 로그인 화면" width="900">
-</p>
+## 기존 변역과의 차별성
 
-### 2. 회의록 관리
+비즈니스 회의에서는 `L/C`, `D/P`, 반덤핑관세처럼 짧지만 의미가 명확해야 하는 용어가
+반복됩니다. 일반 번역 결과가 이 용어를 문장마다 다르게 바꾸면 대화의 정확성과 기록의
+신뢰도가 함께 낮아집니다. TransMate는 사용자가 전문분야를 먼저 선택하고 해당 분야의
+용어집을 번역 요청에 적용해, 단순 문장 번역을 회의 맥락에 맞는 통역 경험으로 확장했습니다.
 
-회의록을 생성·수정·삭제하고 제목과 세부 내용으로 검색할 수 있습니다.
-저장된 문서는 PDF로 내려받거나 별도의 요약 문서로 만들 수 있습니다.
+## 핵심 기능
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/0e90b3bb-b224-428e-ade9-15e93c6e45b9" alt="회의록 생성 수정 삭제 화면" width="900">
-</p>
+- **전문용어 기반 실시간 번역**: 분야 선택과 Custom Terminology 적용
+- **음성·텍스트 입력**: 양방향 대화를 GiftedChat UI로 표시
+- **회의록 관리**: 번역 대화 저장, 검색, 수정, 삭제
+- **요약·다운로드**: 회의 핵심 내용 요약과 문서 다운로드
+- **일정 관리**: 날짜별 회의 일정 등록, 조회, 수정, 삭제
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/e9a4bd7c-543b-40fd-8024-3305eff737ec" alt="회의록 검색과 PDF 다운로드 화면" width="900">
-</p>
+## Translation Flow
 
-### 3. 일정 관리
+```mermaid
+flowchart LR
+    A[Voice / Text] --> B[React Native]
+    B --> C[Spring Boot API]
+    C --> D[AWS Translate]
+    D --> E[Custom Terminology]
+    E --> F[Applied terms 확인]
+    F --> G[용어 마킹·재번역·후처리]
+    G --> H[GiftedChat message]
+```
 
-캘린더에서 날짜를 선택해 회의 일정을 등록하고 시간과 내용을 수정하거나
-삭제할 수 있습니다.
+모바일은 원문·출발 언어·도착 언어·선택 분야의 용어집 이름을 backend에 전달합니다.
+backend는 AWS 응답의 적용 용어를 확인하고, 필요한 경우 원문의 용어를 표시해 재번역한 뒤
+표시 문자를 제거합니다. 이 과정은 번역 결과에서 전문용어가 다시 변형되는 경우를 줄이기
+위한 후처리이며, 별도의 번역 모델을 학습하는 과정이 아닙니다.
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/a604a901-01a1-4c05-84b9-42cf53e84a26" alt="캘린더 일정 관리 화면" width="900">
-</p>
+## Custom Terminology
 
-### 4. 실시간 대화 번역
+```mermaid
+flowchart LR
+    A[공공 전문용어 데이터] --> B[분야별 수집·정제]
+    B --> C[AWS Custom Terminology]
+    C --> D[사용자 분야 선택]
+    D --> E[번역 요청]
+    E --> F[적용 용어 확인]
+    F --> G[후처리·재번역]
+```
 
-대화 상대와 언어, 업무 분야를 선택한 뒤 1:1 채팅을 시작합니다. 음성 입력과
-텍스트 입력을 지원하며, 선택한 분야의 Custom Terminology를 번역 요청에
-적용해 전문 용어의 일관성을 높였습니다.
+핵심은 ML 모델을 직접 학습한 것이 아니라, 도메인 데이터를 실제 번역 파이프라인에서
+사용할 수 있는 용어집으로 만들고 AWS Translate의 Custom Terminology로 적용한 점입니다.
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/8388ec8d-08bb-422e-9610-98383d51c698" alt="대화 설정과 실시간 번역 채팅 화면" width="900">
-</p>
 
-### 5. 대화 저장 및 요약
+## 시연 영상
 
-번역 대화를 제목과 소속 정보와 함께 회의록으로 저장합니다. 저장한 대화는
-문서 목록에서 다시 확인하고 핵심 내용만 요약할 수 있습니다.
+2023년 캡스톤디자인 당시 실제 모바일 환경에서 촬영한 시연 영상입니다.
 
-<p align="center">
-  <img src="https://github.com/H-sooyeon/Susukang/assets/56586470/d7b16d99-f1bd-4b44-b3a5-951ba7ec37ee" alt="번역 대화 저장과 회의록 요약 화면" width="900">
-</p>
+[▶ 2023 TransMate Original Demo](docs/videos/transmate-original-demo-2023.mp4)
 
-## 기술 스택
+전문 분야가 설정된 통역 화면에서 사용자 입력을 번역하고, 전문용어가 포함된 번역 결과가
+대화에 누적되는 핵심 흐름을 확인할 수 있습니다.
 
-| 구분 | 기술 |
+## 화면 자료
+
+전문용어 번역부터 회의록·일정·요약으로 이어지는 주요 화면입니다.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/readme/01-translation.jpg" alt="전문용어가 반영된 한영 번역 대화" width="260"></td>
+    <td align="center"><img src="docs/images/readme/02-minutes.jpg" alt="회의록 목록과 관리 기능" width="260"></td>
+  </tr>
+  <tr>
+    <td align="center">분야별 전문용어가 반영된 번역</td>
+    <td align="center">번역 결과를 회의록으로 관리</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/readme/03-calendar.jpg" alt="캘린더 일정 관리" width="260"></td>
+    <td align="center"><img src="docs/images/readme/04-summary.jpg" alt="회의록 상세 요약" width="260"></td>
+  </tr>
+  <tr>
+    <td align="center">날짜별 회의 일정 관리</td>
+    <td align="center">저장된 회의 내용 요약</td>
+  </tr>
+</table>
+
+## Architecture
+
+```mermaid
+flowchart TB
+    M[React Native 0.71.8] --> F[Firebase Auth / Firestore]
+    M --> B[Spring Boot 3.0.6 REST API]
+    B --> DB[(H2 Database)]
+    B --> T[AWS Translate + Custom Terminology]
+    M --> S[Speech-to-Text]
+    M --> R[회의록·요약·다운로드·일정]
+```
+
+React Native 앱, Firebase 기반 모바일 인증·실시간 데이터,
+Spring Boot REST API, AWS 번역과 서버 환경을 결합한 구조였습니다.
+
+## Tech Stack
+
+| 영역 | 기술 |
 | --- | --- |
-| Mobile | React Native, React Navigation |
-| Authentication | Firebase Authentication |
-| Realtime Data | Firebase Firestore |
-| Backend | Java 17, Spring Boot, Spring Data JPA |
-| Database | H2, Flyway |
-| Translation | Amazon Translate, AWS Custom Terminology |
-| Speech | Google Cloud Speech-to-Text |
-| Summary | Kakao KoGPT API |
-| Test / CI | JUnit 5, Mockito, MockMvc, Jest, ESLint, GitHub Actions |
+| Mobile | React Native 0.71.8, React Navigation, GiftedChat |
+| Backend | Java 17, Spring Boot 3.0.6, Spring Data JPA |
+| Auth / Data | Firebase Authentication, Firestore, H2 |
+| Translation | AWS Translate, AWS Custom Terminology |
+| Input / Output | Speech-to-Text, text input, PDF download |
+| Infrastructure | AWS server environment |
 
-## 팀 구성과 역할
+모바일 클라이언트의 실행 환경과 Firebase·Speech-to-Text 설정은
+[Mobile README](mobile/README.md)에서 확인할 수 있습니다.
 
-| 담당 | 주요 역할 |
+## 팀 프로젝트 이후 리팩토링
+
+프로젝트의 기능과 화면은 보존하고, 백엔드의 구조·보안·신뢰성을 별도로 개선
+
+```mermaid
+flowchart LR
+    M[Mobile] -->|Firebase ID token| I[Auth Interceptor]
+    I --> C[Controller + DTO]
+    C --> S[Service + Ownership Guard]
+    S --> R[Repository]
+    S --> G[TranslationGateway]
+    G --> A[AWS adapter]
+    R --> D[(Flyway-managed H2)]
+```
+
+### 리팩토링 작업 목록
+
+- Controller에 집중된 로직을 Service·Repository로 분리하고 Request·Response DTO를 도입
+- Firebase ID token 검증과 인증 UID 기반의 resource ownership 검증 추가
+- AWS SDK 직접 의존을 `TranslationGateway`와 AWS adapter 구조로 분리
+- Flyway migration을 도입하고 불필요한 평문 password schema 제거
+- validation·전역 예외 처리·번역 실패 응답·server-generated meeting ID 적용
+- backend/mobile 테스트와 CI, 외부 자격 증명 없이 기동하는 local profile 추가
+
+### Verification
+
+| 대상 | 현재 확인 결과 |
 | --- | --- |
-| Mobile | UI 설계, 1:1 음성·텍스트 채팅, 문서·일정 관리, 대화 문서화 |
-| Backend | 계정·회의록·일정 REST API, Amazon Translate 연동 |
-| 데이터·인프라 | 분야별 용어 데이터 제작, AWS 서버 구성과 백엔드 배포 |
+| Backend | **55 tests passed** |
+| Mobile | **9 Jest tests passed** |
+| Mobile lint | **ESLint passed** |
+| Backend local profile | H2·Flyway 기반 startup verified |
 
-### 담당 기여
+## What I Learned
 
-팀 프로젝트에서 다음 영역을 맡았습니다.
+- 외부 번역 서비스를 backend 경계 뒤에 두고 모바일과 안정적으로 연결하는 방법
+- 공공 전문용어를 분야별 데이터셋과 실제 번역 용어집으로 전환하는 과정
+- 모바일-backend API 계약을 팀원과 조율하고 통합하는 경험
+- AWS 서버 환경을 구축·운영하며 배포와 장애 지점을 이해한 경험
+- 완료된 팀 프로젝트를 다시 감사하며 인증·인가·스키마·테스트 문제를 발견하고 개선한 경험
 
-- 모바일 앱이 접근할 수 있는 AWS 서버 환경 구축
-- Spring Boot 백엔드 빌드 및 배포
-- 분야별 전문 용어 데이터셋과 Custom Terminology 제작 참여
-- Amazon Translate 연동과 Translate API 구현 참여
+## Limitations
 
-## 백엔드 API
-
-| 도메인 | 기능 |
-| --- | --- |
-| Account | 사용자 생성 및 정보 조회 |
-| Meeting | 회의록 생성·조회·검색·수정·삭제 |
-| Schedule | 일정 생성·조회·검색·수정·삭제 |
-| Translate | 원문·언어·용어집을 전달받아 번역 결과 반환 |
-
-Firebase ID 토큰으로 사용자를 인증하고, 검증된 UID와 데이터 소유자를
-비교해 다른 사용자의 회의록과 일정에 접근하지 못하도록 처리합니다.
-
-## 포트폴리오 개선
-
-팀 프로젝트의 기능과 화면은 유지하면서 백엔드 중심으로 다음 항목을
-보완했습니다.
-
-- 번역 로직을 Controller–Service–Gateway–AWS adapter로 분리
-- 모바일과 백엔드의 요청·응답 계약 및 입력 검증 정비
-- Firebase 인증과 사용자 데이터 소유권 검증
-- AWS 자격 증명·리전·timeout·retry 설정 외부화
-- AWS 오류를 안전한 `400`·`503` 응답으로 변환
-- Flyway 기반 스키마 변경 관리와 JPA 통합 테스트
-- 백엔드·모바일 테스트 및 GitHub Actions CI 구성
-- 모바일은 사용자 흐름을 변경하지 않고, API 연동과 명백한 오류를 해결하는 최소 범위만 수정
-
-## 검증
-
-- 백엔드 테스트 55개 통과
-- 모바일 Jest 테스트 9개 통과
-- 모바일 ESLint 통과
-- H2·Flyway 환경에서 Spring Boot 서버 기동 확인
-- Amazon Translate 리소스는 현재 종료되어 실제 번역 성공 호출은 재검증하지 않고, 번역 로직과 AWS adapter는 mock 기반 테스트로 검증
+- 원본 모바일은 React Native 0.71.8 기반의 legacy environment입니다.
+- Firebase native configuration과 외부 credential은 repository에 포함하지 않습니다.
+- 현재 포트폴리오 환경에서는 외부 서비스 E2E를 재검증하지 않았습니다.
+- Custom Terminology는 직접 학습한 ML 번역 모델이 아니라 AWS Translate의 용어집 기능입니다.
+- 2023년 당시 AWS 인프라 전체를 현재 환경에 재현하지 않았습니다.
