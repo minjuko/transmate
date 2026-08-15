@@ -29,3 +29,10 @@ Thumbs.db
 
 # Portfolio documents
 docs/*
+!docs/images/
+docs/images/*
+!docs/images/readme/
+!docs/images/readme/*.jpg
+!docs/videos/
+docs/videos/*
+!docs/videos/transmate-original-demo-2023.mp4
