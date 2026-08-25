@@ -36,7 +36,6 @@ const SignInScreen = ({navigation, route}) => {
   };
 
   const onSubmit = async () => {
-    //Keyboard.dismiss();
     const {email, password, confirmPassword} = form;
 
     if (isSignUp && password !== confirmPassword) {
@@ -81,7 +80,6 @@ const SignInScreen = ({navigation, route}) => {
       setUser(user);
 
       navigation.navigate('MainTabScreen');
-      //navigation.navigate('messageScreen');
     } catch (e) {
       const message = {
         'auth/email-already-in-use': '이미 가입된 이메일입니다.',

@@ -51,8 +51,6 @@ const TranslationSettingsScreen = ({navigation}) => {
       .collection('users')
       .where('email', '==', channerText)
       .get();
-    // .where('email', '==', channerText)
-    // .get();
     const allUsers = querySanp.docs.map(docSnap => docSnap.data());
     uid = allUsers.map(item => item.uid)[0];
     email = allUsers.map(item => item.email)[0];
@@ -172,7 +170,7 @@ export default TranslationSettingsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white', //#1976D2
+    backgroundColor: 'white',
     padding: 16,
     justifyContent: 'center',
     alignContent: 'center',
@@ -199,7 +197,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontSize: 20,
-    color: '#1976D2', //white
+    color: '#1976D2',
   },
   chattingCode: {
     justifyContent: 'center',
@@ -208,7 +206,7 @@ const styles = StyleSheet.create({
   dropdown: {
     height: 50,
     borderColor: 'gray',
-    borderWidth: 0.7, //0.5
+    borderWidth: 0.7,
     borderRadius: 8,
     paddingHorizontal: 8,
     marginBottom: 10,

@@ -1,7 +1,6 @@
 import React from 'react';
 import {useUserContext} from '../contexts/UserContext';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-//import MainTab from './MainTab';
 import SignInScreen from './SignInScreen';
 import TranslationSettingsScreen from './TranslationSettingsScreen';
 import ChattingScreen from './ChattingScreen';
@@ -14,9 +13,7 @@ const Stack = createNativeStackNavigator();
 const RootStack = () => {
   const {user} = useUserContext();
   return (
-    // initialRouteName="Voice"
     <Stack.Navigator
-      //initialRouteName="MainTabScreen"
       screenOptions={{
         headerStyle: {
           backgroundColor: '#1976D2',

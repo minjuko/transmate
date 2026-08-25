@@ -55,9 +55,7 @@ const MinutesScreen = ({navigation}) => {
 
       setVisible(false);
     } else {
-      //onInsert(title, department);
       onSave();
-      // 서버에 새로운 문서 추가 코드 추가
       setVisible(false);
     }
     setTitle('');
@@ -97,7 +95,6 @@ const MinutesScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {/**backgroundColor="#FFFFFF" barStyle="dark-content"  */}
       <StatusBar backgroundColor="#1976D2" barStyle="light-content" />
       <SearchBar />
       {files.length === 0 ? (

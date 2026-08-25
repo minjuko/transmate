@@ -266,7 +266,6 @@ const ChattingScreen = ({route, navigation}) => {
     setLanguageCode(selectedLanguageCode);
     setCategory(selectedCategory);
     setCategoryCode(selectedCategoryCode);
-    // 서버로부터의 번역 언어 재설정
     setVisible(false);
   };
 
@@ -277,7 +276,6 @@ const ChattingScreen = ({route, navigation}) => {
   const handleSaveOk = () => {
     setFileTitle('');
     setFileDepartment('');
-    // 서버에 문서 저장하는 코드 추가
     setSaveVisible(false);
 
     let content = '';
@@ -337,7 +335,6 @@ const ChattingScreen = ({route, navigation}) => {
     async msgArray => {
       const msg = msgArray[0];
       const t = msg.text;
-      //AddMessage('사용자: ' + msg.text);
       const textPromise = Promise.resolve(onTranslate(msg));
       const text = await textPromise;
       if (text == null) {
@@ -385,13 +382,6 @@ const ChattingScreen = ({route, navigation}) => {
           };
         });
         setMessages(allTheMsgs);
-        // let receiveMsg;
-        // let splitMsg;
-        // if (allTheMsgs[0]) {
-        //   receiveMsg = allTheMsgs[0].text;
-        //   splitMsg = receiveMsg.split('\n\n')[1];
-        // }
-
         if (message.length === 0 && allTheMsgs[0]) {
           const today = new Date().toISOString().slice(0, 10);
 
@@ -504,13 +494,6 @@ const ChattingScreen = ({route, navigation}) => {
           <Dialog.Button label="확인" onPress={handleSaveOk} />
         </Dialog.Container>
       </View>
-      {/* <View style={styles.chatting}>
-        <AddChattings
-          stopRecognizing={stopRecognizing}
-          startRecognizing={startRecognizing}
-          isRecording={isRecording}
-        />
-          </View>*/}
       <GiftedChat
         style={styles.chat}
         messages={messages}
