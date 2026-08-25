@@ -110,7 +110,7 @@ const CalenderItem = ({schedule}) => {
           <View style={styles.delete}>
             <Text style={styles.time}>시간 {time}</Text>
             <TouchableOpacity
-              style={styles.deleteIocn}
+              style={styles.deleteIcon}
               onPress={() => onRemove(schedule?.id)}>
               <Icon name="clear" size={23} color="#cd5c5c" />
             </TouchableOpacity>
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: 'gray',
   },
-  deleteIocn: {
+  deleteIcon: {
     alignItems: 'flex-end',
     marginLeft: 15,
   },

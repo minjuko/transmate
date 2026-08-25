@@ -47,11 +47,11 @@ const TranslationSettingsScreen = ({navigation}) => {
   };
 
   const getUsers = async () => {
-    const querySanp = await firestore()
+    const querySnap = await firestore()
       .collection('users')
       .where('email', '==', channerText)
       .get();
-    const allUsers = querySanp.docs.map(docSnap => docSnap.data());
+    const allUsers = querySnap.docs.map(docSnap => docSnap.data());
     uid = allUsers.map(item => item.uid)[0];
     email = allUsers.map(item => item.email)[0];
   };
@@ -150,7 +150,7 @@ const TranslationSettingsScreen = ({navigation}) => {
                       },
                       style: 'default',
                     },
-                    {text: '취소', onPress: () => {}, stule: 'cancel'},
+                    {text: '취소', onPress: () => {}, style: 'cancel'},
                   ],
                   {cancelable: true, onDismiss: () => {}},
                 )

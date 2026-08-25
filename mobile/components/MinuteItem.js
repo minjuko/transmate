@@ -13,8 +13,8 @@ const MinuteItem = ({getDate, file}) => {
   const [visible, setVisible] = useState(false);
   const {id, title, department, content, date} = file;
 
-  const [itemTitle, setitemTitle] = useState(title);
-  const [itemDepartment, setitemDepartment] = useState(department);
+  const [itemTitle, setItemTitle] = useState(title);
+  const [itemDepartment, setItemDepartment] = useState(department);
 
   const {onModify, onRemove} = useContext(FileContext);
   const {onCreate} = useContext(KakaoContext);
@@ -50,8 +50,8 @@ const MinuteItem = ({getDate, file}) => {
     if (itemTitle === '') {
       Alert.alert('제목은 공백으로 둘 수 없습니다.');
 
-      setitemTitle(title);
-      setitemDepartment(department);
+      setItemTitle(title);
+      setItemDepartment(department);
     } else {
       onModify({
         id: id,
@@ -118,10 +118,10 @@ const MinuteItem = ({getDate, file}) => {
           <Dialog.Container visible={visible}>
             <Dialog.Title>정보 수정</Dialog.Title>
             <Dialog.Description>변경 사항을 입력해주세요.</Dialog.Description>
-            <Dialog.Input value={itemTitle} onChangeText={setitemTitle} />
+            <Dialog.Input value={itemTitle} onChangeText={setItemTitle} />
             <Dialog.Input
               value={itemDepartment}
-              onChangeText={setitemDepartment}
+              onChangeText={setItemDepartment}
             />
             <Dialog.Button label="취소" onPress={handleCancel} />
             <Dialog.Button label="확인" onPress={handleOk} />

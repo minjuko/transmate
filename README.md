@@ -141,7 +141,7 @@ Spring Boot REST API, AWS 번역과 서버 환경을 결합한 구조였습니�
 | 영역 | 기술                                                |
 | --- |---------------------------------------------------|
 | Mobile | React Native 0.71.8, React Navigation, GiftedChat |
-| Backend | Javca 17, Spring Boot 3.0.6, Spring Data JPA      |
+| Backend | Java 17, Spring Boot 3.0.6, Spring Data JPA       |
 | Auth / Data | Firebase Authentication, Firestore, H2            |
 | Translation | AWS Translate, AWS Custom Terminology             |
 | Input / Output | Speech-to-Text, text input, PDF download          |
