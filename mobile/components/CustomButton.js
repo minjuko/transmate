@@ -15,7 +15,7 @@ const CustomButton = ({onPress, title, hasMarginBottom, theme}) => {
       <Pressable
         onPress={onPress}
         style={({pressed}) => [
-          styles.wraper,
+          styles.wrapper,
           isPrimary && styles.primaryWrapper,
           Platform.OS === 'ios' && pressed && {opacity: 0.5},
         ]}>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     backgroundColor: '#1976D2',
   },
-  wraper: {
+  wrapper: {
     borderRadius: 4,
     height: 48,
     alignItems: 'center',

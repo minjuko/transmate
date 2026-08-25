@@ -7,14 +7,7 @@ const ScheduleContext = createContext();
 
 export const ScheduleContextProvider = ({children}) => {
   const {user} = useUserContext();
-  const [schedules, setSchedules] = useState([
-    {
-      id: 1,
-      title: 'Test1',
-      date: '2023-05-17',
-      time: '12:27',
-    },
-  ]);
+  const [schedules, setSchedules] = useState([]);
 
   const onCreate = async ({title, date, time}) => {
     try {

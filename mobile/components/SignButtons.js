@@ -15,15 +15,15 @@ const SignButtons = ({isSignUp, onSubmit, loading}) => {
     } else {
       navigation.push('SignIn', {isSignUp: true});
     }
-
-    if (loading) {
-      return (
-        <View style={styles.spinnerWrapper}>
-          <ActivityIndicator size={32} color="#6200ee" />
-        </View>
-      );
-    }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.spinnerWrapper}>
+        <ActivityIndicator size={32} color="#6200ee" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.buttons}>

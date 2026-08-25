@@ -18,8 +18,9 @@ export const KakaoContextProvider = ({children}) => {
       const response = await kogptApi(prompt, 160, 0.4);
       setSummary(response);
       return response;
-    } catch {
+    } catch (error) {
       console.error('Error creating summary');
+      throw error;
     }
   };
 
