@@ -9,8 +9,6 @@ const OpenMinute = ({navigation, route}) => {
   const [filecontent, setFileContent] = useState(content);
   const {onModify} = useContext(FileContext);
 
-  // 서버와 연결해서 내용 수정, 저장하는 기능 추가(아래 코드 수정)
-
   const getDate = today => {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;

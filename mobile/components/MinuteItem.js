@@ -76,35 +76,11 @@ const MinuteItem = ({getDate, file}) => {
     ]);
   };
 
-  // const isPermitted = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  //         {
-  //           title: 'External Storage Write Permission',
-  //           message: 'App needs access to Storage data',
-  //         },
-  //       );
-  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //     } catch (err) {
-  //       alert('Write permission err', err);
-  //       return false;
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  // };
-
   const createPDF = async () => {
     const fileTitle = department !== '' ? `${title}_${department}` : `${title}`;
-    //if (await isPermitted()) {
     let options = {
-      //Content to print
       html: `<h1 style="text-align: center;"><strong>${title}</strong></h1><p style="text-align: center;"><strong>${department}</strong></p><p style="margin: 16;">${content}</p>`,
-      //File Name
       fileName: `${fileTitle}`,
-      //File directory
       directory: 'docs',
     };
     let pdfFile = await RNHTMLtoPDF.convert(options);

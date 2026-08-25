@@ -21,13 +21,9 @@ const SummaryScreen = ({navigation, route}) => {
 
   const createPDF = async () => {
     const fileTitle = department !== '' ? `${title}_${department}` : `${title}`;
-    //if (await isPermitted()) {
     let options = {
-      //Content to print
       html: `<h1 style="text-align: center;"><strong>${title}</strong></h1><p style="text-align: center;"><strong>${department}</strong></p><p style="margin: 16;">${summary}</p>`,
-      //File Name
       fileName: `${fileTitle}`,
-      //File directory
       directory: 'docs',
     };
     let file = await RNHTMLtoPDF.convert(options);

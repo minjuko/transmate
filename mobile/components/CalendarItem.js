@@ -119,12 +119,6 @@ const CalenderItem = ({schedule}) => {
         <Dialog.Container visible={visible}>
           <Dialog.Title>일정 수정</Dialog.Title>
           <Dialog.Description>변경 사항을 입력해주세요.</Dialog.Description>
-          {/* <TextInput
-            onFocus={handleInputFocus}
-            placeholder="일정"
-            onChangeText={setItemTitle}
-            value={itemTitle}
-          /> */}
           <Pressable onPress={onPressDate} style={styles.modalButton}>
             <Text style={styles.modalText}>날짜</Text>
             <Text style={styles.dateTimeText}>{itemDate}</Text>
@@ -137,7 +131,6 @@ const CalenderItem = ({schedule}) => {
           <DateTimePickerModal
             isVisible={pickerVisible}
             mode={mode}
-            //date={itemTime}
             onConfirm={onConfirm}
             onCancel={onCancel}
             display="spinner"
@@ -184,14 +177,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: 'gray',
   },
-  //   Icon: {
-  //     alignItems: 'center',
-  //     justifyContent: 'center',
-  //     width: 24,
-  //     height: 24,
-  //     borderRadius: 12,
-  //     borderColor: 'gray',
-  //   },
   deleteIocn: {
     alignItems: 'flex-end',
     marginLeft: 15,
