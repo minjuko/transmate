@@ -26,6 +26,14 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 *
 | **핵심 목표** | 분야별 전문용어를 반영한 비즈니스 통번역 서비스 구현 |
 | **주요 결과** | 캡스톤디자인 최종 발표 · 졸업논문 |
 
+### Team Roles
+
+| 팀원 | 담당 영역 | 주요 역할 |
+| --- | --- | --- |
+| **고민주** | Data · Infrastructure · Translation | 전문용어 데이터셋 구축, AWS EC2 서버 환경 구축·배포, AWS Translate 연동 참여 |
+| **[A](팀원-A-GitHub-URL)** | Mobile · Firebase | React Native Mobile UI 및 Firebase 기반 기능 구현 |
+| **[B](팀원-B-GitHub-URL)** | Backend · Translation | Spring Boot REST API 및 주요 AWS Translate 기능 구현 |
+
 ---
 
 ## My Contribution
@@ -35,8 +43,6 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 *
 | **전문용어 데이터** | 분야별 번역 데이터셋 구축 | **주도** |
 | **AWS 서버 환경** | AWS EC2 인스턴스 구축, PuTTY/SSH 기반 Backend 배포·관리 | **주도** |
 | **번역 기능** | AWS Translate API 및 Custom Terminology 연동 | **공동 구현 참여** |
-
-팀은 역할을 분담하여 개발했으며, React Native Mobile·Firebase는 프론트엔드 담당 팀원이, Spring Boot REST API 전반과 주요 AWS Translate API 구현은 백엔드 담당 팀원이 담당했습니다.
 
 > 공공 전문용어 데이터를 분야별 번역 데이터셋으로 구축하고 AWS EC2 기반 Backend 실행 환경을 구축·배포했으며, AWS Translate Custom Terminology 연동에 공동 참여했습니다.
 
