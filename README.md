@@ -85,7 +85,7 @@ flowchart LR
 
 Mobile에서 입력 텍스트와 설정값을 Backend로 전달하면, 선택한 분야에 대응하는 Custom Terminology를 AWS Translate 요청에 적용하여 전문용어가 반영된 결과를 반환하도록 구성했습니다.
 
-Backend에서는 AWS 응답의 적용 용어를 확인하고 필요한 경우 추가 후처리를 수행합니다. 이는 **별도의 번역 모델을 학습하는 방식이 아니라, AWS Translate의 Custom Terminology를 활용하여 도메인 용어를 번역 파이프라인에 반영하는 구조**입니다.
+Backend는 AWS 응답의 적용 용어를 확인하고, 필요한 경우 전문용어 보존을 위한 후처리를 수행하도록 구현했습니다. 이는 **별도의 번역 모델을 학습하는 방식이 아니라, AWS Translate의 Custom Terminology를 활용하여 도메인 용어를 번역 파이프라인에 반영하는 구조**입니다.
 
 ```mermaid
 flowchart LR
@@ -109,13 +109,12 @@ EC2 인스턴스를 생성하고 PuTTY/SSH를 이용해 서버에 접속하여 B
 ```mermaid
 flowchart LR
     M[React Native Mobile]
-    -->|HTTP / REST API| E[AWS EC2]
+    -->|HTTP / REST API| B[Spring Boot Backend<br/>on AWS EC2]
 
-    E --> B[Spring Boot]
     B --> T[AWS Translate]
 
     D[Developer]
-    -->|PuTTY / SSH| E
+    -->|PuTTY / SSH| B
 ```
 
 ---
@@ -128,7 +127,7 @@ flowchart LR
 | **전문용어 번역** | 선택한 분야의 Custom Terminology를 적용하여 전문용어 반영 |
 | **회의록 관리** | 번역 대화를 회의 단위로 저장·조회 |
 | **회의 내용 요약** | 저장된 회의 내용을 기반으로 요약 결과 제공 |
-| **PDF 생성** | 회의 기록 및 요약 결과를 문서로 생성 |
+| **PDF 다운로드* | 회의 기록 및 요약 결과를 PDF 문서로 생성·다운로드 |
 | **일정 관리** | 회의 일정 등록·관리 |
 
 ---
@@ -251,23 +250,20 @@ flowchart TB
 - 공공 전문용어를 **실제 번역 서비스에서 사용할 수 있는 도메인 데이터셋으로 구축하는 과정**
 - AWS Translate와 Custom Terminology를 활용해 **도메인 데이터를 외부 번역 서비스에 연결하는 방법**
 - AWS EC2 환경에서 Backend를 배포하고 Mobile – Backend – 외부 서비스를 연결한 경험
-- 역할이 분리된 팀에서 **Mobile ↔ Backend API 인터페이스를 조율하고 통합하는 과정**
+- 팀원들과 **Mobile ↔ Backend 요청·응답 구조를 조율하며 협업한 경험**
 - 완료된 프로젝트를 다시 분석하여 인증·인가, 계층 구조, 외부 의존성, DB Migration, 테스트를 개선한 경험
 
 ---
 
 ## Limitations
 
-이 Repository는 **2023년 캡스톤디자인 프로젝트를 포트폴리오 목적으로 정리·개선한 결과물**이며, 현재 서비스 재배포나 native modernization을 목적으로 하지 않습니다.
+이 Repository는 **2023년 캡스톤디자인 프로젝트를 정리·개선한 결과물**이며, 현재 서비스 재배포나 native modernization을 목적으로 하지 않습니다.
 
 - Mobile은 React Native 0.71.8 기반의 legacy native environment를 유지합니다.
-- Android fresh build는 legacy STT dependency의 Kotlin Gradle Plugin 호환성 문제로 제한됩니다.
-- STT 및 native toolchain은 원본 프로젝트의 호환성 보존을 위해 유지했습니다.
-- iOS STT는 사용 중인 legacy STT package의 native 구현 한계로 별도 검증이 필요합니다.
+- STT를 포함한 일부 native dependency는 현재 Android/iOS toolchain과의 호환성 제약이 있습니다.
 - Firebase native configuration과 AWS·Google·Kakao 등의 실제 credential은 Repository에 포함하지 않습니다.
-- 외부 Firebase·AWS·Google·Kakao 서비스의 전체 E2E는 별도 credential 환경이 필요합니다.
-- Kakao KoGPT 연동은 2023년 코드에 기반한 legacy external integration으로, 현재 endpoint 운영 상태를 보장하지 않습니다.
-- Android release configuration은 포트폴리오용 legacy 설정을 유지합니다.
+- 외부 서비스의 전체 E2E 검증에는 별도의 credential 및 서비스 환경이 필요합니다.
+- Kakao KoGPT 연동은 2023년 구현을 보존하고 있어 현재 endpoint 운영 상태를 보장하지 않습니다.
 - Custom Terminology는 직접 학습한 ML 번역 모델이 아니라 **AWS Translate의 도메인 용어집 기능**입니다.
 
 ---
