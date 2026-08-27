@@ -1,38 +1,42 @@
-# IDE
+# Local tools and IDEs
+.agents/
 .idea/
+.vscode/
 *.iml
 
-# Java / Spring
-backend/bin/
-backend/build/
-backend/.gradle/
-*.class
-
-# Environment
+# Environment and credentials
 .env
+.env.local
 application.properties
 application-secret.properties
-
-# React Native
-mobile/node_modules/
-mobile/.bundle/
-mobile/android/app/build/
-mobile/android/build/
-mobile/ios/Pods/
-mobile/ios/build/
 mobile/android/app/google-services.json
-mobile/android/app/debug.keystore
 
-# OS
+# Java / Spring
+backend/.gradle/
+backend/bin/
+backend/build/
+*.class
+
+# React Native local tooling
+mobile/.bundle/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+*~
+
+# OS metadata
 .DS_Store
 Thumbs.db
 
-# Portfolio documents
+# README assets only; exclude other portfolio documents by default
 docs/*
 !docs/images/
 docs/images/*
 !docs/images/readme/
+docs/images/readme/*
 !docs/images/readme/*.jpg
-!docs/videos/
-docs/videos/*
-!docs/videos/transmate-original-demo-2023.mp4
+!docs/images/readme/dataset_example.png
