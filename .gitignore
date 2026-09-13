@@ -31,12 +31,3 @@ mobile/.bundle/
 # OS metadata
 .DS_Store
 Thumbs.db
-
-# README assets only; exclude other portfolio documents by default
-docs/*
-!docs/images/
-docs/images/*
-!docs/images/readme/
-docs/images/readme/*
-!docs/images/readme/*.jpg
-!docs/images/readme/dataset_example.png
