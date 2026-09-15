@@ -1,8 +1,8 @@
 # Transmate Mobile
 
-Transmate의 React Native 모바일 클라이언트입니다. 로그인, 실시간 대화 번역,
-회의록·요약·PDF 저장과 일정 관리 화면을 제공합니다. 서비스 기능과 화면은
-[루트 README](../README.md)를 참고하세요.
+Transmate의 React Native 모바일 클라이언트입니다. 로그인부터 실시간 대화 번역,
+회의록·요약·PDF 저장, 일정 관리까지 모바일 화면을 담당합니다. 전체 서비스 기능과
+화면 구성은 [루트 README](../README.md)에서 확인할 수 있습니다.
 
 ## Stack
 

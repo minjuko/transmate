@@ -4,11 +4,11 @@
 
 [![CI](https://github.com/minjuko/transmate/actions/workflows/ci.yml/badge.svg)](https://github.com/minjuko/transmate/actions/workflows/ci.yml)
 
-TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3명이 개발한 모바일 번역 서비스입니다.
+TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3명이 함께 만든 모바일 번역 서비스입니다.
 
 일반 번역이 비즈니스 전문용어의 의미를 정확하게 반영하지 못하는 문제를 해결하기 위해 공공 전문용어 데이터를 정제하고, **SW·금융·항만/무역** 분야의 AWS Translate Custom Terminology를 구축했습니다. 분야별 전문용어 번역부터 회의록·요약·일정 관리까지 하나의 서비스로 구현하고, Spring Boot 백엔드를 AWS EC2에 배포해 모바일과 외부 서비스를 연결했습니다.
 
-저는 **전문용어 데이터셋 구축과 AWS 인프라를 주도**하고, AWS Translate 및 Custom Terminology 연동을 공동 구현했습니다.
+저는 **전문용어 데이터셋 구축과 AWS 인프라를 주도**했으며, AWS Translate 및 Custom Terminology 연동을 함께 구현했습니다.
 
 ## 프로젝트 정보
 
