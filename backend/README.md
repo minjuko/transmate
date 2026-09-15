@@ -1,8 +1,8 @@
 # Transmate Backend
 
-Transmate의 사용자 인증, 회의록·일정 관리, Amazon Translate 연동을 담당하는
-Spring Boot REST API입니다. 서비스 전체 소개는 [루트 README](../README.md)를
-참고하세요.
+Transmate의 사용자 인증, 회의록·일정 관리, Amazon Translate 연동을 맡는
+Spring Boot REST API입니다. 전체 서비스 소개는 [루트 README](../README.md)에서
+확인할 수 있습니다.
 
 ## Stack
 
