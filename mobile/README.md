@@ -76,4 +76,8 @@ npm.cmd test -- --runInBand
 npm.cmd run lint
 ```
 
-2026-07-30 기준 Jest 9개 테스트와 ESLint가 통과합니다.
+2026-09-18 기준 Jest 6개 스위트·16개 테스트와 ESLint가 통과합니다. 번역 요청의 10초 제한, 빈 응답 처리, 실패 후 재시도와 성공 전 채팅 저장 방지를 모의 응답으로 검증했습니다. 실제 번역 API와 음성 인식은 검증하지 않았습니다.
+
+## Android native build 제한
+
+`cd android`에서 Windows 기준 `.\gradlew.bat assembleDebug`를 실행하면 현재 STT 의존성 `react-native-google-cloud-speech-to-text` 0.5.4가 선언한 Kotlin Gradle plugin 1.3.50 때문에 빌드가 중단됩니다. 앱은 Kotlin 1.5.30·Android Gradle Plugin 7.3.1을 사용하며, 오류 메시지는 Android Gradle Plugin에 Kotlin Gradle plugin 1.5.20 이상이 필요하다고 명시합니다. 이번 검증에서는 native 의존성을 변경하지 않았습니다. iOS native build와 STT 기능도 검증하지 않았습니다.

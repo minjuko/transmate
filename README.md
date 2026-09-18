@@ -189,22 +189,27 @@ flowchart TB
 
 ## 테스트 및 검증
 
-2026.09.13 기준 외부 서비스 호출 없이 로컬 환경에서 검증했습니다.
+2026.09.18 기준 외부 서비스 호출 없이 로컬 환경에서 다시 검증했습니다. Java 17, Node.js 22.20.0, npm 10.9.3 환경입니다.
 
 | 검증 항목 | 결과 |
 | --- | ---: |
-| Backend tests | **55 / 55 passed** |
-| Mobile test suites | **4 / 4 passed** |
-| Mobile tests | **9 / 9 passed** |
-| 실패·Skip | **0** |
+| Backend tests | **56 / 56 passed** |
+| Backend build | **passed** (`./gradlew build`) |
+| Mobile test suites | **6 / 6 passed** |
+| Mobile tests | **16 / 16 passed** |
+| 테스트 실패·Skip | **0** |
 | Mobile ESLint | **passed** |
-| Backend local profile | **startup verified** |
-| Flyway migrations | **3 applied** |
 | Git diff check | **passed** |
 
 Backend local profile은 AWS 인증 정보 없이 H2 인메모리 데이터베이스와 Flyway를 사용해 실행됩니다.
 
 GitHub Actions는 Backend 테스트와 Mobile 테스트·ESLint를 독립적으로 검증합니다.
+
+이번 검증에서는 AWS가 반환한 적용 전문용어에 번역어가 비어 있거나 없는 경우, 추가 번역 요청 없이 첫 결과를 유지하는 회귀 테스트를 추가했습니다. 전문용어 데이터셋 구축과 당시 AWS 실행 환경 구성은 개인 주도 기여이며, Spring·번역 기능 일부는 팀과 공동 구현했습니다. React Native 전체, 번역 모델 전체, Backend 전체를 개인 단독 구현으로 보지 않습니다.
+
+코드 경로상 Mobile은 텍스트 또는 STT 결과를 `/translate`에 보내고, Backend는 선택한 `TerminologyNames`를 AWS Translate에 전달한 뒤 적용 용어를 후처리합니다. Mobile은 번역 요청에 10초 제한을 두고 빈 문자열·누락된 응답을 실패로 처리합니다. 요청 중 표시와 실패 경고창의 재시도 동작을 추가했으며, 정상 번역 결과가 있을 때만 채팅 메시지를 저장합니다. 요청 모듈 테스트와 텍스트 입력 재시도 화면 테스트로 이 동작을 검증했습니다. 회의 기록과 일정은 Backend의 인증·소유권 검사 및 저장 API와 Mobile의 Firebase/Firestore 연동 경계에 걸쳐 있습니다.
+
+Android native build는 `cd mobile/android`에서 `./gradlew assembleDebug`로 재현했으며 실패했습니다. STT 의존성 `react-native-google-cloud-speech-to-text`가 Kotlin Gradle plugin 1.3.50을 요구하는 반면, 현재 Android Gradle Plugin은 1.5.20 이상을 요구합니다. 앱 설정은 Kotlin 1.5.30·AGP 7.3.1입니다. 이번 작업에서는 의존성을 변경하지 않았고, CI에도 native build를 추가하지 않았습니다.
 
 ## 검증 명령
 
@@ -229,8 +234,9 @@ npm run lint
 - 프로젝트 당시 핵심 기능 구현과 AWS EC2 백엔드 배포를 완료했습니다.
 - 현재는 공개 서비스를 운영하거나 재배포한 상태가 아닙니다.
 - 실제 Firebase 인증과 AWS Translate 호출은 별도 인증 정보가 필요해 현재 검증에 포함하지 않았습니다.
+- 실제 Google 음성 인식, iOS STT·native build, AWS 운영 자원과 운영 배포도 이번 검증에 포함하지 않았습니다. 단위·JavaScript 테스트는 외부 번역 API와 AWS 자원 없이 통과했습니다.
 - Firebase 설정 파일과 AWS·Google·Kakao 인증 정보는 저장소에 포함하지 않습니다.
-- Android·iOS Native Build와 전체 Mobile E2E는 현재 환경에서 검증하지 않았습니다.
+- Android native build는 위 Kotlin·AGP 호환성 오류로 실패했고, iOS native build와 전체 Mobile E2E는 검증하지 않았습니다.
 - React Native 0.71.8 기반 의존성은 major upgrade와 Native 환경 호환성 검토가 필요해 기존 버전을 유지했습니다.
 - Kakao KoGPT 연동은 프로젝트 당시 구현을 보존한 것으로, 현재 API 운영 상태는 별도 확인이 필요합니다.
 

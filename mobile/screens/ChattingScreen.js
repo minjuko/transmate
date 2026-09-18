@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useRef,
-  useCallback,
-} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import {
   Text,
   View,
@@ -14,6 +8,7 @@ import {
   Alert,
   PermissionsAndroid,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import GoogleCloudSpeechToText from 'react-native-google-cloud-speech-to-text';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -22,7 +17,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import FileContext from '../contexts/FileContext';
 import STTContext from '../contexts/STTContext';
 import axios from 'axios';
-import backendApi from '../lib/backendApi';
+import {
+  requestTranslation,
+  translationErrorMessage,
+} from '../lib/translationApi';
 import {useUserContext} from '../contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import {GiftedChat} from 'react-native-gifted-chat';
@@ -30,12 +28,11 @@ import Config from 'react-native-config';
 
 const GOOGLE_TRANSLATE_API_KEY = Config.GOOGLE_TRANSLATE_API_KEY ?? '';
 const GOOGLE_SPEECH_API_KEY = Config.GOOGLE_SPEECH_API_KEY ?? '';
-const TRANSLATION_ERROR_MESSAGE =
-  '번역을 완료하지 못했습니다. 네트워크와 서버 상태를 확인해주세요.';
-
 const ChattingScreen = ({route, navigation}) => {
   const [, setResult] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const pendingTranslations = useRef(0);
 
   const [language, setLanguage] = useState(route.params.languageName);
   const [languageCode, setLanguageCode] = useState(route.params.languageCode);
@@ -106,53 +103,61 @@ const ChattingScreen = ({route, navigation}) => {
 
     nextId.current += 1;
 
-    const text = await translate(
-      result.transcript,
+    await runTranslation(
+      () => translate(result.transcript, sourceLanguage, targetLanguage),
+      text => {
+        msg.text += '\n\n' + text;
+        sourceLanguage === 'ko'
+          ? AddMessage('사용자: ' + msg.text)
+          : AddMessage(text);
+
+        nextId.current += 1;
+        const usermsg = {
+          ...msg,
+          sentBy: user.uid,
+          sentTo: uid,
+          createdAt: new Date(),
+        };
+        setMessages(previousMessages =>
+          GiftedChat.append(previousMessages, usermsg),
+        );
+        const chatid =
+          uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
+        firestore()
+          .collection('Chats')
+          .doc(chatid)
+          .collection('messages')
+          .add({...usermsg, createdAt: firestore.FieldValue.serverTimestamp()});
+      },
+    );
+  };
+
+  const runTranslation = async (request, onSuccess) => {
+    pendingTranslations.current += 1;
+    setIsTranslating(true);
+    let text;
+    try {
+      text = await request();
+    } catch (error) {
+      Alert.alert('번역 실패', translationErrorMessage(error), [
+        {text: '닫기'},
+        {text: '다시 시도', onPress: () => runTranslation(request, onSuccess)},
+      ]);
+      return;
+    } finally {
+      pendingTranslations.current -= 1;
+      setIsTranslating(pendingTranslations.current > 0);
+    }
+    onSuccess(text);
+  };
+
+  const translate = (text, sourceLanguage, targetLanguage) =>
+    requestTranslation({
+      text,
+      terminologyName: categoryCode,
       sourceLanguage,
       targetLanguage,
-    );
-    if (text == null) {
-      Alert.alert('번역 실패', TRANSLATION_ERROR_MESSAGE);
-      return;
-    }
-
-    msg.text += '\n\n' + text;
-    sourceLanguage === 'ko'
-      ? AddMessage('사용자: ' + msg.text)
-      : AddMessage(text);
-
-    nextId.current += 1;
-    const usermsg = {
-      ...msg,
-      sentBy: user.uid,
-      sentTo: uid,
-      createdAt: new Date(),
-    };
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, usermsg),
-    );
-    const chatid = uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
-    firestore()
-      .collection('Chats')
-      .doc(chatid)
-      .collection('messages')
-      .add({...usermsg, createdAt: firestore.FieldValue.serverTimestamp()});
-  };
-
-  const translate = async (text, sourceLanguage, targetLanguage) => {
-    try {
-      const response = await backendApi.post('/translate', {
-        Text: text,
-        TerminologyNames: categoryCode,
-        SourceLanguageCode: sourceLanguage,
-        TargetLanguageCode: targetLanguage,
-      });
-      return response.data;
-    } catch {
-      console.error('Error translate');
-      return null;
-    }
-  };
+    });
 
   const detectLanguage = async text => {
     const textToTranslate = text; // 감지할 언어가 포함된 텍스트
@@ -331,39 +336,37 @@ const ChattingScreen = ({route, navigation}) => {
   }, []);
 
   const [ttext, setttext] = useState('');
-  const onSend = useCallback(
-    async msgArray => {
-      const msg = msgArray[0];
-      const t = msg.text;
-      const textPromise = Promise.resolve(onTranslate(msg));
-      const text = await textPromise;
-      if (text == null) {
-        Alert.alert('번역 실패', TRANSLATION_ERROR_MESSAGE);
-        return;
-      }
-      setttext(text);
-      msg.text += '\n\n' + text;
-      const usermsg = {
-        ...msg,
-        sentBy: user.uid,
-        sentTo: uid,
-        createdAt: new Date(),
-      };
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, usermsg),
-      );
-      const chatid =
-        uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
-      firestore()
-        .collection('Chats')
-        .doc(chatid)
-        .collection('messages')
-        .add({...usermsg, createdAt: firestore.FieldValue.serverTimestamp()});
-      AddMessage('사용자:\n' + t);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uid, user.uid, AddMessage],
-  );
+  const onSend = async msgArray => {
+    const msg = msgArray[0];
+    if (!msg) {
+      return;
+    }
+    const t = msg.text;
+    await runTranslation(
+      () => onTranslate(msg),
+      text => {
+        setttext(text);
+        msg.text += '\n\n' + text;
+        const usermsg = {
+          ...msg,
+          sentBy: user.uid,
+          sentTo: uid,
+          createdAt: new Date(),
+        };
+        setMessages(previousMessages =>
+          GiftedChat.append(previousMessages, usermsg),
+        );
+        const chatid =
+          uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
+        firestore()
+          .collection('Chats')
+          .doc(chatid)
+          .collection('messages')
+          .add({...usermsg, createdAt: firestore.FieldValue.serverTimestamp()});
+        AddMessage('사용자:\n' + t);
+      },
+    );
+  };
 
   useEffect(() => {
     const chatid = uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
@@ -424,6 +427,12 @@ const ChattingScreen = ({route, navigation}) => {
   return (
     <SafeAreaView style={styles.Container}>
       <StatusBar backgroundColor="#1976D2" barStyle="light-content" />
+      {isTranslating && (
+        <View style={styles.translationStatus}>
+          <ActivityIndicator />
+          <Text>번역 중...</Text>
+        </View>
+      )}
       <View>
         <Dialog.Container visible={visible} style={styles.dialogContainer}>
           <Dialog.Title style={styles.changeTitle}>언어 설정 변경</Dialog.Title>
@@ -533,6 +542,11 @@ const styles = StyleSheet.create({
   },
   chat: {
     flex: 1,
+  },
+  translationStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
   },
   title: {
     marginTop: 10,
