@@ -114,6 +114,25 @@ class TranslateServiceTest {
     }
 
     @Test
+    void ignoresAppliedTermsWithoutTargetText() {
+        TranslationCommand command = command("Use port and cargo");
+        when(translationGateway.translate(command))
+                .thenReturn(new TranslationResult(
+                        "항만과 화물을 사용하세요",
+                        List.of(
+                                new TranslationTerm("port", "  "),
+                                new TranslationTerm("cargo", null)
+                        )
+                ));
+
+        String result = translateService.translate(request("Use port and cargo"));
+
+        assertThat(result).isEqualTo("항만과 화물을 사용하세요");
+        verify(translationGateway).translate(command);
+        verifyNoMoreInteractions(translationGateway);
+    }
+
+    @Test
     void returnsSecondTranslationWhenTermMarkersAreNotPreserved() {
         TranslationCommand initialCommand = command("Use Amazon Translate");
         TranslationCommand markedCommand = command("Use [Amazon Translate]");
