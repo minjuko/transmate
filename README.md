@@ -23,7 +23,7 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 | 배포 | 프로젝트 당시 AWS EC2에 Spring Boot 백엔드 배포 완료 |
 | 현재 상태 | 공개 운영하지 않음 |
 
-## 본인 담당 및 기여
+## 개인 기여
 
 | 영역 | 담당 내용 | 기여 |
 | --- | --- | --- |
@@ -40,7 +40,7 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 | [황수연](https://github.com/H-sooyeon) | React Native UI · Firebase 기반 기능 |
 | [김수빈](https://github.com/sooobb) | Spring Boot REST API · AWS Translate 기능 |
 
-## 서비스 화면
+## 화면
 
 <table>
   <tr>
@@ -157,7 +157,7 @@ flowchart TB
 
 회의 내용 요약은 모바일에서 Kakao KoGPT API를 호출하는 구조로 구현했습니다.
 
-## 프로젝트 기술 스택
+## 기술 스택
 
 > 아래 기술은 프로젝트 전체 구성 기준입니다. 개인 구현 범위는 **본인 담당 및 기여** 섹션을 따릅니다.
 
@@ -187,7 +187,7 @@ flowchart TB
 | 코드 품질 | Dead Code와 미사용 의존성 정리 |
 | 자동 검증 | Backend·Mobile 테스트, ESLint와 GitHub Actions CI 구성 |
 
-## 테스트 및 검증
+## 검증 결과
 
 2026.09.18 기준 외부 서비스 호출 없이 로컬 환경에서 다시 검증했습니다. Java 17, Node.js 22.20.0, npm 10.9.3 환경입니다.
 
@@ -213,14 +213,14 @@ Android native build는 `cd mobile/android`에서 `./gradlew assembleDebug`로 �
 
 ## 검증 명령
 
-### Backend
+### 백엔드
 
 ```bash
 cd backend
 ./gradlew clean test
 ```
 
-### Mobile
+### 모바일
 
 ```bash
 cd mobile
