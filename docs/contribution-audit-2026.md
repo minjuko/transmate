@@ -131,7 +131,7 @@ TransMate는 2023년 3인 캡스톤 프로젝트로 기록된 모바일 통번�
 
 현재 루트 README의 56 backend, 6 suites/16 mobile, ESLint 통과 기록과 일치한다. `backend/README.md`의 “2026-08-10 기준 55개”는 당시 기록이며 현재보다 1개 적다. 보관 README의 55 backend/9 mobile도 과거 시점 기록이다.
 
-GitHub Actions는 push/PR마다 Ubuntu에서 JDK 17의 backend tests와 Node 20의 mobile tests/ESLint를 실행한다. 이번 감사에서는 로컬 명령만 실행했으며 원격 Actions 상태를 새로 조회하지 않았다. Android native build, iOS build, STT, 실 Firebase, 실 Amazon Translate, Kakao KoGPT, EC2 배포는 실행하지 않았다. README에 기록된 Android Kotlin plugin 호환성 실패도 이번에 재실행하지 않았다.
+GitHub Actions는 push/PR마다 Ubuntu에서 JDK 17의 backend tests와 Node 20의 mobile tests/ESLint를 실행한다. 2026-10-18 감사에서 로컬 테스트·lint·backend build를 다시 실행했다. Android `assembleDebug`도 재실행했으나 STT 의존성의 Kotlin Gradle plugin 1.3.50과 AGP 최소 1.5.20 충돌로 실패했다. iOS build, STT, 실 Firebase, 실 Amazon Translate, Kakao KoGPT, EC2 배포는 실행하지 않았다. Mobile `npm audit --omit=dev`는 75건(critical 4, high 36, moderate 30, low 5)으로 실패했고, 비강제 `npm audit fix`도 React Native peer dependency 충돌로 적용되지 않았다.
 
 ## 8. 당시 구현과 이후 개선 구분
 
