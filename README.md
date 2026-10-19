@@ -10,7 +10,7 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 
 저는 **전문용어 데이터셋 구축과 AWS EC2 기반 실행 환경 구성**을 주도했으며, Spring Boot API와 AWS Translate·Custom Terminology 연동에 공동 참여했습니다.
 
-## 프로젝트 정보
+## 프로젝트 개요
 
 | 항목 | 내용 |
 | --- | --- |
@@ -22,16 +22,7 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 | 결과 | 캡스톤디자인 최종 발표 · 졸업논문 |
 | 배포 | 프로젝트 당시 AWS EC2에 Spring Boot 백엔드 배포 완료 |
 
-## 개인 기여
-
-| 영역 | 담당 내용 | 기여 |
-| --- | --- | --- |
-| 전문용어 데이터 | 공공 데이터 수집·선별·정제 및 분야별 번역 데이터셋 구축 | 주도 |
-| AWS 인프라 | EC2 인스턴스 구성, Spring Boot 백엔드 배포·관리 | 주도 |
-| 번역 기능 | AWS Translate API 및 Custom Terminology 연동 | 공동 구현 |
-| 서비스 연동 | 모바일·백엔드·외부 번역 서비스 간 요청·응답 구조 조율 | 공동 구현 |
-
-## 화면
+## 주요 기능 및 화면
 
 <table>
   <tr>
@@ -52,7 +43,7 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
   </tr>
 </table>
 
-## 주요 기능
+### 주요 기능
 
 | 기능 | 설명 |
 | --- | --- |
@@ -62,91 +53,6 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 | 회의 내용 요약 | 저장된 회의 내용을 Kakao KoGPT로 요약 |
 | PDF 다운로드 | 회의 기록과 요약 결과를 PDF로 생성·다운로드 |
 | 일정 관리 | 회의 일정을 등록하고 관리 |
-
-## 핵심 구현
-
-### 1. 전문용어 데이터셋 구축
-
-공공 전문용어 데이터에서 서비스에 필요한 용어를 선별하고 표기 형식을 통일한 뒤, **SW·금융·항만/무역** 분야로 분류했습니다.
-
-정제한 데이터를 `Source Term ↔ Target Term` 구조로 변환해 AWS Translate의 Custom Terminology에 적용했습니다.
-
-```mermaid
-flowchart LR
-    A["공공 전문용어 데이터"] --> B["수집·선별"]
-    B --> C["정제·형식 통일"]
-    C --> D["분야별 분류"]
-    D --> E["용어 쌍 구성"]
-    E --> F["Custom Terminology"]
-```
-
-<p align="center">
-  <img src="docs/images/readme/dataset_example.png" alt="SW·금융·항만 및 무역 전문용어 데이터셋 예시" width="850">
-</p>
-
-<p align="center"><em>SW·금융·항만/무역 분야별 전문용어 데이터셋 일부</em></p>
-
-구축 데이터에는 `FTP → 파일 전송 규약`, `ABS → 자산담보부증권`, `AD Duty → 반덤핑관세` 등의 용어가 포함됩니다.
-
-### 2. AWS Translate 연동
-
-사용자가 출발 언어, 도착 언어와 전문 분야를 선택하면 모바일에서 입력값을 Spring Boot API로 전달합니다.
-
-백엔드는 선택한 분야의 Custom Terminology를 AWS Translate 요청에 적용하고, 응답에 포함된 용어 정보를 바탕으로 전문용어를 보존하는 후처리를 수행합니다.
-
-```mermaid
-flowchart LR
-    A["음성·텍스트 입력"] --> B["언어·분야 선택"]
-    B --> C["Spring Boot API"]
-    C --> D["Custom Terminology 선택"]
-    D --> E["AWS Translate 요청"]
-    E --> F["전문용어 후처리"]
-    F --> G["번역 결과 표시"]
-```
-
-Custom Terminology는 별도로 학습한 번역 모델이 아니라, AWS Translate에 적용하는 **도메인 용어집**입니다.
-
-### 3. AWS EC2 배포 및 서비스 연결
-
-AWS EC2 인스턴스와 보안그룹, 포트, 실행환경을 구성하고 Spring Boot 백엔드를 배포했습니다.
-
-배포된 백엔드를 중심으로 모바일 앱과 AWS Translate를 연결해 `Mobile → Backend → Translation API` 흐름을 완성했습니다.
-
-```mermaid
-flowchart LR
-    M["React Native Mobile"] -->|"REST API"| B["Spring Boot · AWS EC2"]
-    B --> T["AWS Translate"]
-    T --- CT["Custom Terminology"]
-    D["Developer"] -->|"SSH 배포·관리"| B
-```
-
-## 시스템 구성
-
-```mermaid
-flowchart TB
-    M["React Native Mobile"]
-    F["Firebase Authentication · Firestore"]
-    B["Spring Boot · AWS EC2"]
-    DB[("H2")]
-    T["AWS Translate"]
-    CT["Custom Terminology"]
-    K["Kakao KoGPT"]
-
-    M <-->|"인증·모바일 데이터"| F
-    M -->|"REST API"| B
-    B -->|"JPA"| DB
-    B -->|"번역 요청·응답"| T
-    T --- CT
-    M -->|"회의 요약"| K
-```
-
-- **Mobile**: React Native UI, Firebase 연동, STT, 회의록·일정·요약 기능
-- **Backend**: Spring Boot REST API, 번역 요청과 Account·Meeting·Schedule 데이터 처리
-- **Authentication·Data**: Firebase Authentication, Firestore
-- **Translation**: AWS Translate, Custom Terminology
-- **Infrastructure**: AWS EC2
-
-회의 내용 요약은 모바일에서 Kakao KoGPT API를 호출하는 구조로 구현했습니다.
 
 ## 기술 스택
 
@@ -164,76 +70,44 @@ flowchart TB
 
 모바일 실행환경과 Firebase·STT 설정은 [Mobile README](mobile/README.md)에서 확인할 수 있습니다.
 
-## 개선 작업
+## 담당 역할 및 핵심 구현
 
-프로젝트 당시 구현한 기능을 유지하면서 계층 구조, 인증·인가, 외부 서비스 의존성과 자동 검증 환경을 개선했습니다.
+- **전문용어 데이터:** 공공 전문용어를 수집·정제하고 SW·금융·항만/무역 분야의 AWS Translate Custom Terminology를 구성했습니다. *(주도)*
+- **AWS 실행 환경:** EC2에서 Spring Boot 백엔드 실행 환경과 배포를 구성했습니다. *(주도)*
+- **번역 API 연동:** 모바일·백엔드·AWS Translate 간 요청·응답 및 전문용어 후처리 기능 구현에 참여했습니다. *(공동)*
+- **검증 체계:** 백엔드 테스트, 모바일 테스트와 GitHub Actions CI를 정리했습니다.
 
-| 영역 | 개선 내용 |
-| --- | --- |
-| Backend 구조 | Controller 중심 로직을 Controller–Service–Repository 계층으로 분리 |
-| 인증·인가 | Firebase ID Token 검증과 사용자 리소스 소유권 검사 적용 |
-| 번역 연동 | TranslationGateway와 AWS Adapter로 외부 API 의존성 분리 |
-| Database | Flyway 기반 스키마 마이그레이션 구성 |
-| 예외 처리 | 입력값 검증과 공통 오류 응답 구조 정리 |
-| 코드 품질 | Dead Code와 미사용 의존성 정리 |
-| 자동 검증 | Backend·Mobile 테스트, ESLint와 GitHub Actions CI 구성 |
+## 실행 방법
 
-## 검증 결과
-
-2026.10.18 기준 외부 서비스 호출 없이 로컬 환경에서 다시 검증했습니다. Java 17, Node.js 22.20.0, npm 10.9.3 환경입니다.
-
-| 검증 항목 | 결과 |
-| --- | ---: |
-| Backend tests | **56 / 56 passed** |
-| Backend build | **passed** (`./gradlew build`) |
-| Mobile test suites | **6 / 6 passed** |
-| Mobile tests | **16 / 16 passed** |
-| 테스트 실패·Skip | **0** |
-| Mobile ESLint | **passed** |
-| Git diff check | **passed** |
-| Mobile 운영 의존성 감사 | **failed** · 75건(critical 4, high 36, moderate 30, low 5) |
-
-Backend local profile은 AWS 인증 정보 없이 H2 인메모리 데이터베이스와 Flyway를 사용해 실행됩니다.
-
-GitHub Actions는 Backend 테스트와 Mobile 테스트·ESLint를 독립적으로 검증합니다.
-
-이번 검증에서는 AWS가 반환한 적용 전문용어에 번역어가 비어 있거나 없는 경우, 추가 번역 요청 없이 첫 결과를 유지하는 회귀 테스트를 추가했습니다. 전문용어 데이터셋 구축과 당시 AWS 실행 환경 구성은 개인 주도 기여이며, Spring·번역 기능 일부는 팀과 공동 구현했습니다. React Native 전체, 번역 모델 전체, Backend 전체를 개인 단독 구현으로 보지 않습니다.
-
-코드 경로상 Mobile은 텍스트 또는 STT 결과를 `/translate`에 보내고, Backend는 선택한 `TerminologyNames`를 AWS Translate에 전달한 뒤 적용 용어를 후처리합니다. Mobile은 번역 요청에 10초 제한을 두고 빈 문자열·누락된 응답을 실패로 처리합니다. 요청 중 표시와 실패 경고창의 재시도 동작을 추가했으며, 정상 번역 결과가 있을 때만 채팅 메시지를 저장합니다. 요청 모듈 테스트와 텍스트 입력 재시도 화면 테스트로 이 동작을 검증했습니다. 회의 기록과 일정은 Backend의 인증·소유권 검사 및 저장 API와 Mobile의 Firebase/Firestore 연동 경계에 걸쳐 있습니다.
-
-Android native build는 2026-10-18 `cd mobile/android`에서 `./gradlew assembleDebug`로 다시 재현했으며 실패했습니다. STT 의존성 `react-native-google-cloud-speech-to-text`가 Kotlin Gradle plugin 1.3.50을 요구하는 반면, 현재 Android Gradle Plugin은 1.5.20 이상을 요구합니다. 앱 설정은 Kotlin 1.5.30·AGP 7.3.1입니다. `npm audit fix`도 React Native 0.71과 transitive `react-native-reanimated` 4.7.1의 peer dependency 충돌로 적용되지 않았습니다. 이번 작업에서는 강제 설치나 major migration을 하지 않았고, CI에도 native build를 추가하지 않았습니다.
-
-## 검증 명령
-
-### 백엔드
+백엔드 로컬 실행 및 모바일 환경·Firebase·STT 설정은 [Mobile README](mobile/README.md)와 저장소의 실행 설정을 참고해 주세요.
 
 ```bash
+# 백엔드 테스트
 cd backend
 ./gradlew clean test
-```
 
-### 모바일
-
-```bash
-cd mobile
+# 모바일 테스트
+cd ../mobile
 npm ci
 npm test -- --runInBand
 npm run lint
 ```
 
-## 현재 검증 범위
+## 테스트 및 검증
 
-- 프로젝트 당시 핵심 기능 구현과 AWS EC2 백엔드 배포를 완료했습니다.
-- 현재는 공개 서비스를 운영하거나 재배포한 상태가 아닙니다.
-- 실제 Firebase 인증과 AWS Translate 호출은 별도 인증 정보가 필요해 현재 검증에 포함하지 않았습니다.
-- 실제 Google 음성 인식, iOS STT·native build, AWS 운영 자원과 운영 배포도 이번 검증에 포함하지 않았습니다. 단위·JavaScript 테스트는 외부 번역 API와 AWS 자원 없이 통과했습니다.
-- Firebase 설정 파일과 AWS·Google·Kakao 인증 정보는 저장소에 포함하지 않습니다.
-- Android native build는 위 Kotlin·AGP 호환성 오류로 실패했고, iOS native build와 전체 Mobile E2E는 검증하지 않았습니다.
-- React Native 0.71.8 기반 의존성은 major upgrade와 Native 환경 호환성 검토가 필요해 기존 버전을 유지했습니다.
-- Kakao KoGPT 연동은 프로젝트 당시 구현을 보존한 것으로, 현재 API 운영 상태는 별도 확인이 필요합니다.
+| 항목 | 결과 |
+| --- | --- |
+| Backend 테스트 | **56건 통과** |
+| Backend 빌드 | 통과 |
+| Mobile 테스트 | **16건 통과** |
+| Mobile ESLint | 통과 |
+| GitHub Actions | Backend·Mobile 자동 검증 |
 
-## 문서
+> 자동화 테스트 결과와 실제 모바일 네이티브 빌드·외부 번역 서비스 실행은 별개입니다. 현재 Android 네이티브 빌드는 의존성 호환성 문제로 통과하지 않아, 실행환경 재현 시 추가 작업이 필요합니다.
+
+## 관련 문서
 
 | 문서 | 내용 |
 | --- | --- |
 | [Mobile README](mobile/README.md) | 모바일 실행환경과 Firebase·STT 설정 |
+
