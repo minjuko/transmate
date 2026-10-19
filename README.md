@@ -6,7 +6,7 @@
 
 TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3명이 함께 만든 모바일 번역 서비스입니다.
 
-일반 번역이 비즈니스 전문용어의 의미를 정확하게 반영하지 못하는 문제를 해결하기 위해 공공 전문용어 데이터를 정제하고, **SW·금융·항만/무역** 분야의 AWS Translate Custom Terminology를 구축했습니다. 분야별 전문용어 번역부터 회의록·요약·일정 관리까지 하나의 서비스로 구현하고, Spring Boot 백엔드를 AWS EC2에 배포해 모바일과 외부 서비스를 연결했습니다.
+공공 전문용어 데이터를 정제해 **SW·금융·항만/무역** 분야의 AWS Translate Custom Terminology를 구축하고, 모바일 번역·회의록 기능을 Spring Boot API와 연결했습니다.
 
 저는 **전문용어 데이터셋 구축과 AWS EC2 기반 실행 환경 구성**을 주도했으며, Spring Boot API와 AWS Translate·Custom Terminology 연동에 공동 참여했습니다.
 
@@ -21,7 +21,6 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 | 본인 역할 | 전문용어 데이터 · AWS 실행 환경 · 번역 연동(공동) |
 | 결과 | 캡스톤디자인 최종 발표 · 졸업논문 |
 | 배포 | 프로젝트 당시 AWS EC2에 Spring Boot 백엔드 배포 완료 |
-| 현재 상태 | 공개 운영하지 않음 |
 
 ## 개인 기여
 
@@ -31,14 +30,6 @@ TransMate는 전남대학교 소프트웨어공학과 캡스톤디자인에서 3
 | AWS 인프라 | EC2 인스턴스 구성, Spring Boot 백엔드 배포·관리 | 주도 |
 | 번역 기능 | AWS Translate API 및 Custom Terminology 연동 | 공동 구현 |
 | 서비스 연동 | 모바일·백엔드·외부 번역 서비스 간 요청·응답 구조 조율 | 공동 구현 |
-
-### 팀 구성
-
-| 담당 | 주요 역할 |
-| --- | --- |
-| 고민주 | 전문용어 데이터셋 · AWS EC2 실행 환경 · AWS Translate 연동 공동 참여 |
-| [황수연](https://github.com/H-sooyeon) | React Native UI · Firebase 기반 기능 |
-| [김수빈](https://github.com/sooobb) | Spring Boot REST API · AWS Translate 기능 |
 
 ## 화면
 
