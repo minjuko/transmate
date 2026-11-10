@@ -157,7 +157,7 @@ flowchart TB
 | **Infrastructure** | AWS EC2 |
 | **Verification** | JUnit, Jest, ESLint |
 
-모바일 실행 환경과 Firebase·STT 설정은 [Mobile README](mobile/README.md)에서 확인할 수 있습니다.
+모바일 실행 환경과 Firebase·STT 설정은 [Mobile README](../../mobile/README.md)에서 확인할 수 있습니다.
 
 ---
 
